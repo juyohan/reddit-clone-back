@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="0.0" y="362.0">com.reddit.redditcloneback.DAO.Post</node>
+    <node x="69.25" y="170.0">com.reddit.redditcloneback.DAO.User</node>
+    <node x="140.0" y="373.0">com.reddit.redditcloneback.DAO.VerificationToken</node>
+    <node x="0.0" y="549.0">com.reddit.redditcloneback.DAO.RegisterRequest</node>
+    <node x="31.75" y="0.0">com.reddit.redditcloneback.DAO.BasicEntity</node>
+    <node x="366.0" y="0.0">com.reddit.redditcloneback.DAO.NotificationEmail</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.reddit.redditcloneback.DAO.User" target="com.reddit.redditcloneback.DAO.BasicEntity">
+      <point x="0.0" y="-71.0" />
+      <point x="0.0" y="60.0" />
+    </edge>
+    <edge source="com.reddit.redditcloneback.DAO.Post" target="com.reddit.redditcloneback.DAO.User">
+      <point x="0.0" y="-71.0" />
+      <point x="60.0" y="337.0" />
+      <point x="107.25" y="337.0" />
+      <point x="-38.0" y="71.0" />
+    </edge>
+    <edge source="com.reddit.redditcloneback.DAO.VerificationToken" target="com.reddit.redditcloneback.DAO.User">
+      <point x="0.0" y="-60.0" />
+      <point x="230.5" y="337.0" />
+      <point x="183.25" y="337.0" />
+      <point x="38.0" y="71.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="273.5" y="323.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
