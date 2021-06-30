@@ -1,4 +1,4 @@
-package com.reddit.redditcloneback.DAO;
+package com.reddit.redditcloneback.DTO;
 
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;

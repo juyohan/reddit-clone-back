@@ -27,4 +27,10 @@ public class Post {
     @JoinColumn(name = "USER_ID")
     private User user;
 
+    // 연관관계 편의 메소드 ( 주인한테 설정 )
+//    public void addUser(User user) {
+//        this.user = user;
+//        user.getPosts().add(this);
+//    }
+
 }

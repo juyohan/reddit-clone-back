@@ -1,4 +1,4 @@
-package com.reddit.redditcloneback.Post;
+package com.reddit.redditcloneback.Service;
 
 import com.reddit.redditcloneback.DAO.Post;
 

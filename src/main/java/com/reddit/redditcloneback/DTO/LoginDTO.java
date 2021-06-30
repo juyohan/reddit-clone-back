@@ -1,16 +1,13 @@
-package com.reddit.redditcloneback.DAO;
+package com.reddit.redditcloneback.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class RegisterRequest {
-
-    private String username;
-    private String password;
+public class LoginDTO {
     private String email;
-
+    private String password;
 }
