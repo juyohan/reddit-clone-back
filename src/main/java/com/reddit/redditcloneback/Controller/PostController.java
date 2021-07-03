@@ -30,7 +30,7 @@ public class PostController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/post/data")
+    @GetMapping(value = "/data")
     public ResponseEntity<List<Post>> getPost() {
         return status(HttpStatus.OK).body(postService.findAllPost());
     }
