@@ -14,13 +14,13 @@ import java.util.List;
 @SpringBootTest
 class RedditCloneBackApplicationTests {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Test
-    @Transactional
-    public void test() {
-
-    }
+//    @Autowired
+//    private UserRepository userRepository;
+//
+//    @Test
+//    @Transactional
+//    public void test() {
+//
+//    }
 
 }
