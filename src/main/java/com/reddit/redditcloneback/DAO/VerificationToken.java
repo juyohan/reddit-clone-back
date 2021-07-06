@@ -20,7 +20,7 @@ public class VerificationToken {
     private String uuid;
 
 //    @JsonBackReference
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "USER_ID")
     private User user;
 
