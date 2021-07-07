@@ -20,6 +20,7 @@ public class Post {
     private String title;
 
     @Lob
+    @Column(name = "POST_DESC")
     private String desc;
     private String url;
 
