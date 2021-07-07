@@ -20,7 +20,11 @@ public class Post {
     private String title;
 
     @Lob
+<<<<<<< Updated upstream
     @Column(name = "POST_DESC")
+=======
+    @Column(name = "postDesc")
+>>>>>>> Stashed changes
     private String desc;
     private String url;
 
