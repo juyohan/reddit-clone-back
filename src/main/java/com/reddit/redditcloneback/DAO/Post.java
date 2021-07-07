@@ -21,7 +21,11 @@ public class Post {
 
     @Lob
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     @Column(name = "POST_DESC")
+=======
+    @Column(name = "postDesc")
+>>>>>>> Stashed changes
 =======
     @Column(name = "postDesc")
 >>>>>>> Stashed changes
