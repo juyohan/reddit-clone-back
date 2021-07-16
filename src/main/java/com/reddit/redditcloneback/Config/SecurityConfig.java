@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll() // 로그인, 회원가입
-                .antMatchers("/api/get/**").permitAll() // 게시글
+                .antMatchers("/api/feed/**").permitAll() // 게시글
                 .antMatchers("/api/user/**").authenticated() // 개인 정보 페이지
                 .anyRequest()
                 .authenticated()

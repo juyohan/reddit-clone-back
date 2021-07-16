@@ -30,4 +30,11 @@ public class UserService {
                 () -> new SpringRedditException("찾지 못했숩니다."));
         return user;
     }
+
+    @Transactional
+    public User loginAfterFindUserName(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new SpringRedditException(username + "을 찾지 못했습니다."));
+        return user;
+    }
 }

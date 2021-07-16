@@ -91,15 +91,15 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/user")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<User> getMyUserInfo() {
-        return ResponseEntity.ok(authService.getMyUserWithAuthorities().get());
-    }
-
-    @GetMapping("/user/{username}")
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<User> getUserInfo(@PathVariable String username) {
-        return ResponseEntity.ok(authService.getUserWithAuthorities(username).get());
-    }
+//    @GetMapping("/user")
+//    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+//    public ResponseEntity<User> getMyUserInfo() {
+//        return ResponseEntity.ok(authService.getMyUserWithAuthorities().get());
+//    }
+//
+//    @GetMapping("/user/{username}")
+//    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+//    public ResponseEntity<User> getUserInfo(@PathVariable String username) {
+//        return ResponseEntity.ok(authService.getUserWithAuthorities(username).get());
+//    }
 }

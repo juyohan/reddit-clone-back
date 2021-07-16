@@ -1,27 +1,20 @@
-package com.reddit.redditcloneback.Service;
-
-import com.reddit.redditcloneback.DAO.Post;
-import com.reddit.redditcloneback.Repository.PostRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-public class PostService implements PostServiceImp{
-
-    private PostRepository postRepository;
-
-    public PostService(PostRepository postRepository) {
-        this.postRepository = postRepository;
-    }
-
-    @Override
-    public Post savePost(Post post) {
-        return postRepository.save(post);
-    }
-
-    @Override
-    public List<Post> findAllPost() {
-        return postRepository.findAll();
-    }
-}
+//package com.reddit.redditcloneback.Service;
+//
+//import com.reddit.redditcloneback.DAO.Feed;
+//import com.reddit.redditcloneback.Repository.PostRepository;
+//import lombok.AllArgsConstructor;
+//import org.springframework.stereotype.Service;
+//
+//@Service
+//@AllArgsConstructor
+//public class PostService{
+//
+//    private PostRepository postRepository;
+//
+//    public Feed savePost(Feed feed) {
+//        return postRepository.save(feed);
+//    }
+//
+//
+//
+//}

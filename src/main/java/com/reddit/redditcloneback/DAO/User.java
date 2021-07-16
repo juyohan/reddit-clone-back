@@ -3,6 +3,7 @@ package com.reddit.redditcloneback.DAO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 import java.util.*;
@@ -22,6 +23,7 @@ public class User{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
     private Long id;
+
     private String email;
     private String password;
     private String username;
@@ -30,9 +32,10 @@ public class User{
 //    @JsonManagedReference
 //    private VerificationToken verificationToken;
 //
-//    // 읽기전용으로 게시글 목록 가져옴
-//    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-//    private List<Post> posts = new ArrayList<>();
+//    // 게시글과 유저 정보를 양방향으로 해야할까?
+//    @Nullable
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    private List<Feed> feeds = new ArrayList<>();
 
     // 권한
     @ManyToMany
@@ -49,5 +52,6 @@ public class User{
 
     // email 인증을 완료 했는지 안했는지 확인한다.
     private boolean enable;
+
 
 }

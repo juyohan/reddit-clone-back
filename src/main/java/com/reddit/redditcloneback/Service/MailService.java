@@ -33,7 +33,7 @@ public class MailService {
             messageHelper.setText(new StringBuffer().append("<h1>\"이메일 인증\"</h1><br><br>")
                     .append("<h3>" + user.getUsername() + "님</h3><br>")
                     .append("<p>아래 링크를 클릭하시면 이메일 인증이 완료됩니다.</p>")
-                    .append("<a href='http://3.35.132.251:8080/api/auth/accountVerification?userEmail=")
+                    .append("<a href='http://localhost:8080/api/auth/accountVerification?userEmail=")
                     .append(user.getEmail())
                     .append("&authKey=")
                     // 인증키를 생성해야함.

@@ -30,7 +30,7 @@ public class JwtProvider implements InitializingBean {
 
     private static final String AUTHORITIES_KEY = "auth";
 
-    public static final long tokenValidityInMilliseconds = 1000L * 100;
+    public static final long tokenValidityInMilliseconds = 1000L * 100000;
 
     private final String secret;
     private Key key;

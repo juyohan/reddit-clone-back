@@ -1,13 +1,10 @@
-package com.reddit.redditcloneback.Repository;
-
-import com.reddit.redditcloneback.DAO.Post;
-import com.reddit.redditcloneback.DAO.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-@Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
-    List<Post> findByUser(User user);
-}
+//package com.reddit.redditcloneback.Repository;
+//
+//import com.reddit.redditcloneback.DAO.Feed;
+//import org.springframework.data.jpa.repository.JpaRepository;
+//import org.springframework.stereotype.Repository;
+//
+//@Repository
+//public interface PostRepository extends JpaRepository<Feed, Long> {
+////    Optional<Post> findByUsername(User user);
+//}
