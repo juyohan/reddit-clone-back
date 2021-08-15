@@ -8,6 +8,9 @@ import com.reddit.redditcloneback.Util.SecurityUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,5 +39,18 @@ public class UserService {
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new SpringRedditException(username + "을 찾지 못했습니다."));
         return user;
+    }
+
+    // 현재 로그인 되어있는 회원 정보를 가져옴
+    @Transactional(readOnly = true)
+    public User getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        // 정보가 없을 경우
+        if (principal.equals("anonymousUser"))
+            return null;
+        // 정보가 있을 경우
+        else
+            return userRepository.findByUsername(((UserDetails) principal).getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("없는 닉네임입니다."));
     }
 }

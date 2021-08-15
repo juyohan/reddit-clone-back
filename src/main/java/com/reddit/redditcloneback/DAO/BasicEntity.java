@@ -7,6 +7,7 @@ import com.reddit.redditcloneback.Config.TimeConfig;
 import lombok.Data;
 
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
@@ -21,4 +22,9 @@ public abstract class BasicEntity {
     @JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime modifiedDate;
 //    private String modifiedBy;
+
+    @PrePersist
+    public void preCreateDate() {
+        this.createDate = LocalDateTime.now();
+    }
 }

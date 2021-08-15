@@ -26,4 +26,6 @@ public class FeedDTO {
     private String desc;
 
     private String username;
+
+    private Long feedId;
 }

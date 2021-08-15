@@ -50,4 +50,31 @@ public class MailService {
             return null;
         }
     }
+
+    // 임시 비밀번호 보내기
+    @Async
+    String sendEmailFindPw(User user) {
+        String tempPw = new TempKey().getKey(8, true);
+
+        MimeMessagePreparator message = mimeMessage -> {
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "utf-8");
+            messageHelper.setTo(user.getEmail());
+            messageHelper.setSubject("BookRed 임시 비밀번호");
+            messageHelper.setText(new StringBuffer()
+                    .append("<h1>\"임시 비밀번호 생성\"</h1><br><br>")
+                    .append("<h3>" + user.getUsername() + "님</h3><br>")
+                    .append("<p>임시 비밀번호는 아래와 같습니다.</p><br><br>")
+                    .append("<h2>\"" + tempPw + "\"</h2><br>")
+                    .append("<p>로그인 후엔 비밀번호를 변경해주세요.</p>")
+                    .toString(), true);
+            messageHelper.setFrom("BookRed", "BookRed Manager");
+        };
+        try {
+            mailSender.send(message);
+            return tempPw;
+        } catch (MailException e) {
+            System.out.println("e = " + e);
+            return null;
+        }
+    }
 }

@@ -9,14 +9,17 @@ import com.reddit.redditcloneback.JWT.JwtProvider;
 import com.reddit.redditcloneback.RedisDAO.RedisAuthKey;
 import com.reddit.redditcloneback.Repository.*;
 import com.reddit.redditcloneback.Util.SecurityUtil;
+import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisKeyExpiredEvent;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,8 +86,9 @@ public class AuthService {
     // 이메일 인증을 시도한 uuid가 db에 있는지 확인한다.
     public void verifyAccount(String authKey) {
         // 가져온 authKey가 만료가 되었는지, 존재하는지 확인
+        // 만료가 되었을 때, 다시 재 인증 메일을 보낼 수 있도록.
         RedisAuthKey redisAuthKey = redisAuthKeyRepository.findById(authKey).orElseThrow(
-                () -> new SpringRedditException("redisAuthkey가 만료됨"));
+                () -> new SpringRedditException("redis Auth_Key 가 만료됨"));
 
         fetchUserAndEnable(redisAuthKey.getUserUuid());
     }
@@ -112,24 +116,44 @@ public class AuthService {
         return (user == null) ? true : false;
     }
 
+    // email 중복 확인
+    public boolean checkEmail(String email) {
+        User user = userRepository.findOneWithAuthoritiesByEmail(email).orElse(null);
+        return (user == null) ? true : false;
+    }
+
     // 로그인
     public JwtTokenDTO login(LoginDTO loginDTO) {
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                    new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
 
-            // 권한 있는지 확인
-            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(usernamePasswordAuthenticationToken);
-            // 권한 주입
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        // 권핸 객체를 생성하려고 authenticate(Token)을 실행할 때, loadUserByUsername 메서드가 실행된다.
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(usernamePasswordAuthenticationToken);
+        // 권한 주입
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // 토큰 생성
-            String jwt = jwtProvider.createJws(authentication);
-            // 토큰 저장
-            JwtTokenDTO jwtTokenDTO = new JwtTokenDTO();
-            jwtTokenDTO.setJwtToken(jwt);
-            jwtTokenDTO.setUsername(authentication.getName());
+        // 토큰 생성
+        String jwt = jwtProvider.createJws(authentication);
+        // 토큰 저장
+        JwtTokenDTO jwtTokenDTO = new JwtTokenDTO();
+        jwtTokenDTO.setJwtToken(jwt);
+        jwtTokenDTO.setUsername(authentication.getName());
 
-            return jwtTokenDTO;
+        return jwtTokenDTO;
+    }
+
+    // 비밀번호 전송
+    public User sendToMailFindPw(String email) {
+        // emailCheck를 굳이 하지않고 여기서 orElseThrow 를 보내서 Error를 Catch 하는 방법으로 가자.
+        User user = userRepository.findOneWithAuthoritiesByEmail(email).orElseThrow(() ->
+                new RuntimeException(email + "을 찾을 수 없습니다.")
+        );
+        System.out.println("AuthService.user = " + user);
+
+        String temp = mailService.sendEmailFindPw(user);
+        user.setPassword(encodePassword(temp));
+
+        return userRepository.save(user);
     }
 
     @Transactional(readOnly = true)

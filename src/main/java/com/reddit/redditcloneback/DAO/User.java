@@ -3,7 +3,7 @@ package com.reddit.redditcloneback.DAO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
-import org.jetbrains.annotations.Nullable;
+
 
 import javax.persistence.*;
 import java.util.*;
