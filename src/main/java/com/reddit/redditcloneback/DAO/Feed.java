@@ -36,14 +36,15 @@ public class Feed extends BasicEntity{
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    @Column(name = "LIKE_COUNT")
-    private Integer likeCount = 0;
+    // like_count의 기본 값을 0으로 설정
+    @Column(name = "LIKE_COUNT", columnDefinition = "integer default 0")
+    private Integer likeCount;
 
-    // 영속성을 하기 전에 likeCount의 값을 확인해서 null이라면 0으로 초기화 시켜준다.
-    @PrePersist
-    public void preLikeCount() {
-        this.likeCount = (this.likeCount == null) ? 0 : this.likeCount;
-    }
+//    // 영속성을 하기 전에 likeCount의 값을 확인해서 null이라면 0으로 초기화 시켜준다.
+//    @PrePersist
+//    public void preLikeCount() {
+//        this.likeCount = (this.likeCount == null) ? 0 : this.likeCount;
+//    }
 
     // 연관관계 편의 메소드 ( 주인한테 설정 )
 //    public void addUser(User user) {

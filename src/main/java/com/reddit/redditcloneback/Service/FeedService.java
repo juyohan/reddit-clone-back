@@ -7,10 +7,15 @@ import com.reddit.redditcloneback.Error.FeedNotFoundException;
 import com.reddit.redditcloneback.Repository.FeedRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -34,6 +39,7 @@ public class FeedService {
                 .title(feedDTO.getTitle())
                 .desc(feedDTO.getDesc())
                 .user(user)
+                .likeCount(feedDTO.getLikeCount())
 //                .url(feedPath)
                 .build();
 
@@ -60,11 +66,19 @@ public class FeedService {
 //        return feeds;
 //    }
 
-    // 일정 정해진 Like의 수가 넘어가면 hot으로 넘김
-    // Like의 수는 400개?
+    // hot은 2틀전부터 현재까지 게시글들 중에서 like의 수가 20이상인 게시글들만 가져옴 (랜덤으로 출력하는건 frontend에서 처리)
     public List<Feed> hotFindFeeds() {
+        // 2틀 전 0시 0분 0초부터
+        LocalDateTime before = LocalDateTime.of(LocalDate.now().minusDays(2), LocalTime.of(0,0,0));
+        // 오늘 날 23시 59분 59초까지
+        LocalDateTime now = LocalDateTime.of(LocalDate.now(), LocalTime.of(23,59,59));
+
+        return feedRepository.findAllByCreateDateBetweenAndLikeCountIsGreaterThanEqual(before, now, 20);
+    }
+
+    // new는 제일 최근에 올라온 피드들 순서대로 정렬해서 가져옴
+    public List<Feed> newFindFeeds() {
 
         return null;
     }
-
 }

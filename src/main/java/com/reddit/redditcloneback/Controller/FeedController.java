@@ -49,7 +49,7 @@ public class FeedController {
     }
     @GetMapping("/hot")
     public ResponseEntity<List<Feed>> getHotPost() {
-        return new ResponseEntity<List<Feed>>(feedService.findAllFeed(), HttpStatus.OK);
+        return new ResponseEntity<List<Feed>>(feedService.hotFindFeeds(), HttpStatus.OK);
     }
     @GetMapping("/rising")
     public ResponseEntity<List<Feed>> getRisingPost() {
