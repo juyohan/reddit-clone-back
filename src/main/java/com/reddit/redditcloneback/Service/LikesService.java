@@ -3,7 +3,6 @@ package com.reddit.redditcloneback.Service;
 import com.reddit.redditcloneback.DAO.Feed;
 import com.reddit.redditcloneback.DAO.LikeType;
 import com.reddit.redditcloneback.DAO.Likes;
-import com.reddit.redditcloneback.DAO.User;
 import com.reddit.redditcloneback.DTO.LikeDTO;
 import com.reddit.redditcloneback.Error.FeedNotFoundException;
 import com.reddit.redditcloneback.Repository.FeedRepository;
@@ -13,9 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.reddit.redditcloneback.DAO.LikeType.UPLIKE;
 
@@ -80,45 +77,11 @@ public class LikesService {
         likesRepository.deleteById(likes.get().getId());
     }
 
-    // Like를 눌렀는지 안눌렀는지 확인하는 함수
-    public LikeType checkLikeToFeed(LikeDTO likeDTO) {
-        Feed feed = feedRepository.findById(likeDTO.getFeedId()).orElseThrow(
-                () -> new FeedNotFoundException(likeDTO.getFeedId() + "의 게시글을 찾지 못했습니다.")
-        );
-//        Feed feed = feedRepository.findById(feedId).orElseThrow(
-//                () -> new FeedNotFoundException(feedId + "를 찾을 수 없습니다.")
-//        );
-        Optional<Likes> likesByUserAndFeed = likesRepository.findByFeedAndUserOrderByIdDesc(feed, userService.getCurrentUser());
-//        Optional<Likes> likesByUser = likesRepository.findByUser(userService.getCurrentUser());
-//        List<Likes> likesByUser = likesRepository.findByUser(userService.getCurrentUser());
-//        List<LikeType> likeType = likesByUser.stream().map(likes -> likes.getLikeType()).collect(Collectors.toList());
-
-        if (likesByUserAndFeed.isPresent()) {
-            return likesByUserAndFeed.get().getLikeType();
-        } else {
-            return null;
-        }
-//        return likesByUser.get().getLikeType();
-    }
-
-    public LikeType checkLikeTypeToFeed(Feed feed) {
+    //
+    public Likes checkLikeTypeToFeed(Feed feed) {
+        // 로그인한 사용자가 좋아요를 누른 피드가 있을 경우
         Optional<Likes> likesByUserAndFeed = likesRepository.findByFeedAndUserOrderByIdDesc(feed, userService.getCurrentUser());
 
-//        System.out.println("likesByUserAndFeed = " + likesByUserAndFeed.isPresent());
-//        System.out.println("likesByUserAndFeed.isEmpty() = " + likesByUserAndFeed.isEmpty());
-//
-        if (!likesByUserAndFeed.isPresent())
-            return null;
-        else
-            return likesByUserAndFeed.get().getLikeType();
-//        Optional<Likes> likesByUser = likesRepository.findByUser(userService.getCurrentUser());
-
-//        return feeds.stream().map(feed -> {
-//            if(likesByUser.get().getId() == feed.getId()) {
-//                return likesByUser.get().getLikeType();
-//            }
-//            else
-//                return null;
-//        }).collect(Collectors.toList());
+        return likesByUserAndFeed.orElse(null);
     }
 }

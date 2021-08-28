@@ -104,14 +104,9 @@ public class FeedService {
     public List<ResponseFeedDTO> topFindFeeds(Pageable pageable) {
         // like의 갯수를 내림차 순으로 정렬한 뒤 가져옴
         List<Feed> feeds = feedRepository.findAll(pageable).getContent();
-//        feeds.stream().forEach(feed -> likesService.checkLikeTypeToFeed(feed));
 
-//        List<LikeType> liketype = likesService.checkLikeTypeToFeed(feeds);
-//        System.out.println("liketype = " + liketype);
-        List<ResponseFeedDTO> list = mappingFeedToResponseFeed(feeds);
-
-        System.out.println("list = " + list);
-        return list;
+        // Feed 가공
+        return mappingFeedToResponseFeed(feeds);
     }
 
     // rising은 하룻동안 like나, 댓글을 가장 많이 받은 순서대로
@@ -125,6 +120,7 @@ public class FeedService {
         return null;
     }
 
+    // 클라이언트에게 보낼 Data 가공
     private List<ResponseFeedDTO> mappingFeedToResponseFeed(List<Feed> feeds) {
         List<ResponseFeedDTO> list = feeds.stream().map(feed -> {
                     ResponseFeedDTO responseFeedDTO = ResponseFeedDTO.builder()
@@ -134,22 +130,19 @@ public class FeedService {
                             .title(feed.getTitle())
                             .username(feed.getUser().getUsername())
                             .url(feed.getUrl())
+                            .likeType(null)
                             .createDate(feed.getCreateDate())
                             .build();
 
-                    // 얘 때문에, Feed의 갯수만큼 DB에 접근해서 LikeType을 가져온다.
-                    LikeType likeType = likesService.checkLikeTypeToFeed(feed);
-//                    System.out.println("likeType1 = " + likeType);
-//
-                    if(likeType == null)
-                        System.out.println("likeType2 = " + likeType);
-                    else
-                        System.out.println("likeType3 = " + likeType);
+                    // DB에 접근해서 Likes를 가져온다.
+                    Likes likes = likesService.checkLikeTypeToFeed(feed);
+
+                    if(likes != null)
+                        responseFeedDTO.setLikeType(likes.getLikeType());
 
                     return responseFeedDTO;
                 })
                 .collect(Collectors.toList());
         return list;
     }
-
 }
