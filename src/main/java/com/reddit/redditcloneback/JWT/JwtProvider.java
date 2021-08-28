@@ -91,6 +91,7 @@ public class JwtProvider implements InitializingBean {
 
     // Header에서 받은 토큰 파싱
     public Authentication parseJws(String token, ServletResponse res) {
+        System.out.println("parsing 시작");
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()

@@ -18,12 +18,14 @@ public class Likes {
     @Column(name = "LIKES_ID")
     private Long id;
 
+    @Enumerated(value = EnumType.STRING)
     private LikeType likeType;
 
-    @NotNull
+//    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FEED_ID", referencedColumnName = "FEED_ID")
     private Feed feed;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
     private User user;

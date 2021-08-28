@@ -104,7 +104,11 @@ public class AuthController {
         try {
             JwtTokenDTO jwtTokenDTO = authService.login(loginDTO);
 
-
+//            final Cookie cookie = new Cookie("auth", jwtTokenDTO.getJwtToken());
+//            cookie.setMaxAge(60*30);
+//            cookie.setHttpOnly(true);
+//            response.addCookie(cookie);
+//
             response.addHeader(JwtFilter.AUTHORIZATION_HEADER, jwtTokenDTO.getJwtToken());
 
 //            response.setHeader(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwtTokenDTO.getJwtToken());
@@ -140,6 +144,8 @@ public class AuthController {
         else
             return new ResponseEntity<>("이메일 없움", FORBIDDEN);
     }
+
+
 
 //    @GetMapping("/user")
 //    @PreAuthorize("hasAnyRole('USER','ADMIN')")

@@ -27,7 +27,7 @@ public class FeedDTO {
 
     private String username;
 
-    private Integer likeCount;
+    private int likeCount;
 
     private Long feedId;
 }

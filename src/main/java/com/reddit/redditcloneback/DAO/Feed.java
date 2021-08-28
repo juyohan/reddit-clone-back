@@ -31,6 +31,7 @@ public class Feed extends BasicEntity{
     private String url;
 //    private String path;
 
+    // 이거 조인이 되어서 검색이 됌.
     @ManyToOne
 //    @JsonIgnore
     @JoinColumn(name = "USER_ID")

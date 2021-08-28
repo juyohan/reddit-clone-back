@@ -64,6 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/feed/**").permitAll() // 게시글
 //                .antMatchers("/api/feed/**").authenticated()
                 .antMatchers("/api/user/**").authenticated() // 개인 정보 페이지
+                .antMatchers("/api/likes/**").permitAll()
                 .anyRequest()
                 .authenticated()
 

@@ -1,13 +1,20 @@
 package com.reddit.redditcloneback.Service;
 
 import com.reddit.redditcloneback.DAO.Feed;
+import com.reddit.redditcloneback.DAO.LikeType;
+import com.reddit.redditcloneback.DAO.Likes;
 import com.reddit.redditcloneback.DAO.User;
 import com.reddit.redditcloneback.DTO.FeedDTO;
+import com.reddit.redditcloneback.DTO.ResponseFeedDTO;
 import com.reddit.redditcloneback.Error.FeedNotFoundException;
 import com.reddit.redditcloneback.Repository.FeedRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.jni.Local;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,6 +23,8 @@ import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -24,9 +33,15 @@ public class FeedService {
 
     private FeedRepository feedRepository;
     private UserService userService;
+    private LikesService likesService;
 
-    public List<Feed> findAllFeed() {
-        return feedRepository.findAll();
+//    public List<Feed> findAllFeed() {
+//        return feedRepository.findAll();
+//    }
+
+    public Page<Feed> findAllFeed(Pageable pageable) {
+
+        return feedRepository.findAll(pageable);
     }
 
     // 피드 저장
@@ -67,18 +82,74 @@ public class FeedService {
 //    }
 
     // hot은 2틀전부터 현재까지 게시글들 중에서 like의 수가 20이상인 게시글들만 가져옴 (랜덤으로 출력하는건 frontend에서 처리)
-    public List<Feed> hotFindFeeds() {
+    // 페이징 처리 안함 + 댓글 갯수를 이용해 hot으로 올리기
+    public List<Feed> hotFindFeeds(Pageable pageable) {
         // 2틀 전 0시 0분 0초부터
-        LocalDateTime before = LocalDateTime.of(LocalDate.now().minusDays(2), LocalTime.of(0,0,0));
+        LocalDateTime before = LocalDateTime.of(LocalDate.now().minusDays(2), LocalTime.of(0, 0, 0));
         // 오늘 날 23시 59분 59초까지
-        LocalDateTime now = LocalDateTime.of(LocalDate.now(), LocalTime.of(23,59,59));
+        LocalDateTime now = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
 
-        return feedRepository.findAllByCreateDateBetweenAndLikeCountIsGreaterThanEqual(before, now, 20);
+        return feedRepository.findAllByCreateDateBetweenAndLikeCountIsGreaterThanEqual(before, now, 20, pageable);
     }
 
     // new는 제일 최근에 올라온 피드들 순서대로 정렬해서 가져옴
-    public List<Feed> newFindFeeds() {
+    public List<ResponseFeedDTO> newFindFeeds() {
+        // 모든 feed에서 createDate 이름의 컬럼을 기준으로 최신순으로 정렬한 뒤 보냄
+        List<Feed> feeds = feedRepository.findAll(Sort.by(Sort.Direction.DESC, "createDate"));
 
+        return mappingFeedToResponseFeed(feeds);
+    }
+
+    // top은 like의 수가 가장 많은 피드들 순서대로 정렬
+    public List<ResponseFeedDTO> topFindFeeds(Pageable pageable) {
+        // like의 갯수를 내림차 순으로 정렬한 뒤 가져옴
+        List<Feed> feeds = feedRepository.findAll(pageable).getContent();
+//        feeds.stream().forEach(feed -> likesService.checkLikeTypeToFeed(feed));
+
+//        List<LikeType> liketype = likesService.checkLikeTypeToFeed(feeds);
+//        System.out.println("liketype = " + liketype);
+        List<ResponseFeedDTO> list = mappingFeedToResponseFeed(feeds);
+
+        System.out.println("list = " + list);
+        return list;
+    }
+
+    // rising은 하룻동안 like나, 댓글을 가장 많이 받은 순서대로
+    public List<Feed> risingFindFeeds() {
+        LocalDateTime before = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime now = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
+
+        List<Feed> feeds = feedRepository.findAllByCreateDateBetweenOrderByLikeCountDesc(before, now);
+
+        System.out.println("feeds = " + feeds);
         return null;
     }
+
+    private List<ResponseFeedDTO> mappingFeedToResponseFeed(List<Feed> feeds) {
+        List<ResponseFeedDTO> list = feeds.stream().map(feed -> {
+                    ResponseFeedDTO responseFeedDTO = ResponseFeedDTO.builder()
+                            .id(feed.getId())
+                            .desc(feed.getDesc())
+                            .likeCount(feed.getLikeCount())
+                            .title(feed.getTitle())
+                            .username(feed.getUser().getUsername())
+                            .url(feed.getUrl())
+                            .createDate(feed.getCreateDate())
+                            .build();
+
+                    // 얘 때문에, Feed의 갯수만큼 DB에 접근해서 LikeType을 가져온다.
+                    LikeType likeType = likesService.checkLikeTypeToFeed(feed);
+//                    System.out.println("likeType1 = " + likeType);
+//
+                    if(likeType == null)
+                        System.out.println("likeType2 = " + likeType);
+                    else
+                        System.out.println("likeType3 = " + likeType);
+
+                    return responseFeedDTO;
+                })
+                .collect(Collectors.toList());
+        return list;
+    }
+
 }
