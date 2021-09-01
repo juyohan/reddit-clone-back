@@ -17,7 +17,7 @@
 
 ## 🏫 사용 
 - *Spring boot*
-  - *Jpa (Java Persistence API)*
+  - *Jpa (Java Persistence API) & JPQL (Java Persistence Query Language)*
   - *JWT (Json Web Token)*
   - *Mysql*
   - *Redis*
@@ -36,4 +36,4 @@
 
 ## 📄 프로젝트 기술
 
-### JWT (Json Web Token)
+#### JWT (Json Web Token)
