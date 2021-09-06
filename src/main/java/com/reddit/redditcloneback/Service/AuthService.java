@@ -137,6 +137,8 @@ public class AuthService {
         // 토큰 저장
         JwtTokenDTO jwtTokenDTO = new JwtTokenDTO();
         jwtTokenDTO.setJwtToken(jwt);
+//        jwtTokenDTO.setUser(userRepository.findByUsername(authentication.getName())
+//                .orElseThrow(() -> new UsernameNotFoundException(authentication.getName() + "을 찾을 수 없습니다.")));
         jwtTokenDTO.setUsername(authentication.getName());
 
         return jwtTokenDTO;

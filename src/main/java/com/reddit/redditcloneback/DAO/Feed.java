@@ -32,7 +32,7 @@ public class Feed extends BasicEntity{
 //    private String path;
 
     // 이거 조인이 되어서 검색이 됌.
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
 //    @JsonIgnore
     @JoinColumn(name = "USER_ID")
     private User user;
@@ -40,6 +40,9 @@ public class Feed extends BasicEntity{
     // like_count의 기본 값을 0으로 설정
     @Column(name = "LIKE_COUNT", columnDefinition = "integer default 0")
     private Integer likeCount;
+
+//    @OneToMany(mappedBy = "feed", fetch = FetchType.LAZY)
+//    private List<Likes> likes = new ArrayList<>();
 
 //    // 영속성을 하기 전에 likeCount의 값을 확인해서 null이라면 0으로 초기화 시켜준다.
 //    @PrePersist

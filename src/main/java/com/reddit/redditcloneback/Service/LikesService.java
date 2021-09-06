@@ -1,8 +1,8 @@
 package com.reddit.redditcloneback.Service;
 
 import com.reddit.redditcloneback.DAO.Feed;
-import com.reddit.redditcloneback.DAO.LikeType;
 import com.reddit.redditcloneback.DAO.Likes;
+import com.reddit.redditcloneback.DAO.User;
 import com.reddit.redditcloneback.DTO.LikeDTO;
 import com.reddit.redditcloneback.Error.FeedNotFoundException;
 import com.reddit.redditcloneback.Repository.FeedRepository;
@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.reddit.redditcloneback.DAO.LikeType.UPLIKE;
 
@@ -77,11 +79,11 @@ public class LikesService {
         likesRepository.deleteById(likes.get().getId());
     }
 
-    //
-    public Likes checkLikeTypeToFeed(Feed feed) {
-        // 로그인한 사용자가 좋아요를 누른 피드가 있을 경우
-        Optional<Likes> likesByUserAndFeed = likesRepository.findByFeedAndUserOrderByIdDesc(feed, userService.getCurrentUser());
-
-        return likesByUserAndFeed.orElse(null);
+    public List<LikeDTO> likes(List<Feed> feeds) {
+//        User user = userService.loginAfterFindUserName("jupaka");
+        return likesRepository.findByUserAndFeedIn(userService.getCurrentUser(), feeds).stream()
+                .map(LikeDTO::new)
+                .collect(Collectors.toList());
+//        return likesRepository.findByUserAndFeedIn(user, feeds).stream().map(LikeDTO::new).collect(Collectors.toList());
     }
 }

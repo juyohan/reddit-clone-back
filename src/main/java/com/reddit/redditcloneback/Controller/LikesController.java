@@ -21,10 +21,4 @@ public class LikesController {
         Integer likeCount = likesService.like(likeDTO);
         return new ResponseEntity<>(likeCount, OK);
     }
-
-    @PostMapping("/get")
-    public ResponseEntity<LikeType> getLikes(@RequestBody LikeDTO likeDTO) {
-        LikeType likeType = likesService.checkLikeToFeed(likeDTO);
-        return new ResponseEntity<>(likeType, OK);
-    }
 }

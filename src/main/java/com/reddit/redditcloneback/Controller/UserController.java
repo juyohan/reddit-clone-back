@@ -1,9 +1,7 @@
 package com.reddit.redditcloneback.Controller;
 
 import com.reddit.redditcloneback.DAO.User;
-import com.reddit.redditcloneback.Error.SpringRedditException;
 import com.reddit.redditcloneback.Service.UserService;
-import com.reddit.redditcloneback.Util.SecurityUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

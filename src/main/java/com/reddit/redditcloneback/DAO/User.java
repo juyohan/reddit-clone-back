@@ -22,10 +22,13 @@ public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
+    @JsonIgnore
     private Long id;
 
     private String email;
+
     private String password;
+
     private String username;
 
 //    @OneToOne(mappedBy = "user")

@@ -7,24 +7,13 @@ import com.reddit.redditcloneback.DTO.UserDTO;
 import com.reddit.redditcloneback.Error.SpringRedditException;
 import com.reddit.redditcloneback.JWT.JwtFilter;
 import com.reddit.redditcloneback.Service.AuthService;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
-import java.net.URI;
-import java.net.URL;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -104,22 +93,9 @@ public class AuthController {
         try {
             JwtTokenDTO jwtTokenDTO = authService.login(loginDTO);
 
-//            final Cookie cookie = new Cookie("auth", jwtTokenDTO.getJwtToken());
-//            cookie.setMaxAge(60*30);
-//            cookie.setHttpOnly(true);
-//            response.addCookie(cookie);
-//
             response.addHeader(JwtFilter.AUTHORIZATION_HEADER, jwtTokenDTO.getJwtToken());
 
-//            response.setHeader(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwtTokenDTO.getJwtToken());
-
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-//            httpServletResponse.addHeader(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwtTokenDTO.getJwtToken());
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.add(JwtFilter.AUTHORIZATION_HEADER + "AAAAA", "Bearer " + jwtTokenDTO.getJwtToken());
-
-            return new ResponseEntity<>(jwtTokenDTO, OK);
+            return new ResponseEntity<>(jwtTokenDTO.getUsername(), OK);
         }
 //        catch (InternalAuthenticationServiceException internalAuthenticationServiceException) {
 //            System.out.println("internalAuthenticationServiceException = " + internalAuthenticationServiceException);
