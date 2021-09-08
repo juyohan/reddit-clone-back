@@ -24,9 +24,6 @@ public class UserService {
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
 
-//    @Transactional
-//    public User userFindWithJwtToken()
-
     @Transactional
     public User loginAfterFindUserName() {
         User user = SecurityUtil.getCurrentUsername().flatMap(userRepository::findByUsername).orElseThrow(
@@ -45,6 +42,9 @@ public class UserService {
     @Transactional(readOnly = true)
     public User getCurrentUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        System.out.println("SecurityContextHolder.getContext().getAuthentication() = " + SecurityContextHolder.getContext().getAuthentication());
+        System.out.println("principal = " + principal);
+
         // 정보가 없을 경우
         if (principal.equals("anonymousUser"))
             return null;

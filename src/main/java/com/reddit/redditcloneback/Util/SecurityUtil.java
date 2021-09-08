@@ -22,6 +22,7 @@ public class SecurityUtil {
         System.out.println("인증정보가 있는지 확인합니다요~");
         // JwtFilter 에서 doFilter 에서 저장되는 인증정보가 꺼내지게 되는 것이다.
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("authentication = " + authentication);
 
         if (authentication == null) {
             logger.debug("Security Context에 인증이 없습니다.");

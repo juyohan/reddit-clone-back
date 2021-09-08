@@ -3,6 +3,7 @@ package com.reddit.redditcloneback.Service;
 import com.reddit.redditcloneback.Repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,6 +32,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         UserDetails userDetails = userRepository.findOneWithAuthoritiesByEmail(username)
                 .map(user -> createUser(username, user))
                 .orElseThrow(() -> new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없음"));
+
+//        System.out.println("userDetails = " + userDetails);
+
 //        Optional<User> userOptional = userRepository.findByUsername(username);
 //        User user = userOptional.orElseThrow(() -> new UsernameNotFoundException("No user Found with username " + username));
 //

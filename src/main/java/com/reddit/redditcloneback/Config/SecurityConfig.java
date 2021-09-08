@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
+                .csrf().disable()// csrf를 사용하지 않게 함.
 
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -55,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션을 사용하지 않게 설정함.
 
                 .and()
                 .authorizeRequests()
@@ -64,12 +65,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/feed/**").permitAll() // 게시글
 //                .antMatchers("/api/feed/**").authenticated()
                 .antMatchers("/api/user/**").authenticated() // 개인 정보 페이지
-                .antMatchers("/api/likes/**").permitAll()
+                .antMatchers("/api/likes/**").permitAll() // 좋아요
                 .anyRequest()
                 .authenticated()
 
+//                .and()
+//                .formLogin()
+//                .loginPage("/api/")
+
+                .and()
+                .logout().clearAuthentication(true)
+//                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+
                 .and()
                 .apply(new JwtSecurityConfig(jwtProvider));
+
+        // 자식 스레드와 부모 스레드에 관해 동일한 SecurityContext를 유지
+//        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
     }
 //
 //    @Autowired

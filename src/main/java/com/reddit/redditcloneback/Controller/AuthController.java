@@ -9,9 +9,13 @@ import com.reddit.redditcloneback.JWT.JwtFilter;
 import com.reddit.redditcloneback.Service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -41,11 +45,11 @@ public class AuthController {
         try {
             authService.verifyAccount(authKey);
             // 성공했을 경우 홈으로
-            return new RedirectView("http://localhost:8080/");
+            return new RedirectView("http://localhost:3000/");
         } catch (SpringRedditException exception) {
             System.out.println("exception = " + exception);
             // 실패하면 다시 이메일 인증하는 곳으로
-            return new RedirectView("http://localhost:8080/error");
+            return new RedirectView("http://localhost:3000/error");
         }
     }
 
@@ -95,6 +99,8 @@ public class AuthController {
 
             response.addHeader(JwtFilter.AUTHORIZATION_HEADER, jwtTokenDTO.getJwtToken());
 
+            System.out.println("SecurityContextHolder = " + SecurityContextHolder.getContext().getAuthentication());
+
             return new ResponseEntity<>(jwtTokenDTO.getUsername(), OK);
         }
 //        catch (InternalAuthenticationServiceException internalAuthenticationServiceException) {
@@ -121,7 +127,16 @@ public class AuthController {
             return new ResponseEntity<>("이메일 없움", FORBIDDEN);
     }
 
-
+//    @PostMapping("/logout")
+//    public ResponseEntity userLogout(HttpServletResponse response) {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        System.out.println("auth = " + auth);
+//        if (auth != null && auth.isAuthenticated()) {
+//            SecurityContextHolder.clearContext();
+//        }
+//        System.out.println("auth = " + auth);
+//        return new ResponseEntity(OK);
+//    }
 
 //    @GetMapping("/user")
 //    @PreAuthorize("hasAnyRole('USER','ADMIN')")

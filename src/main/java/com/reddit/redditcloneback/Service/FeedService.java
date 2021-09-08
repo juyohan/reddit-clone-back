@@ -32,7 +32,7 @@ public class FeedService {
 
     // 피드 저장
     public Feed saveFeed(FeedDTO feedDTO) {
-        User user = userService.getCurrentUser();
+        User user = userService.loginAfterFindUserName();
 
 //        String feedPath = feedUrl(user.getUsername());
 
@@ -52,7 +52,7 @@ public class FeedService {
 
     // 피드 수정
     public Feed modifiedFeed(FeedDTO feedDTO) {
-        User user = userService.getCurrentUser();
+        User user = userService.loginAfterFindUserName();
 
         Feed feed = feedRepository.findByUserAndId(user, feedDTO.getFeedId()).orElseThrow(() -> new FeedNotFoundException("없는 유저나 피드입니다."));
 

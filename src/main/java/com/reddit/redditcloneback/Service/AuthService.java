@@ -150,7 +150,6 @@ public class AuthService {
         User user = userRepository.findOneWithAuthoritiesByEmail(email).orElseThrow(() ->
                 new RuntimeException(email + "을 찾을 수 없습니다.")
         );
-        System.out.println("AuthService.user = " + user);
 
         String temp = mailService.sendEmailFindPw(user);
         user.setPassword(encodePassword(temp));
