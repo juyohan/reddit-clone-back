@@ -80,10 +80,17 @@ public class LikesService {
     }
 
     public List<LikeDTO> likes(List<Feed> feeds) {
-//        User user = userService.loginAfterFindUserName("jupaka");
-        return likesRepository.findByUserAndFeedIn(userService.getCurrentUser(), feeds).stream()
+        System.out.println("=============================================");
+        User user = userService.getCurrentUser();
+        System.out.println("=============================================");
+
+        // 현재 로그인을 하지 않았다면
+        if (user == null)
+            return null;
+
+        return likesRepository.findByUserAndFeedIn(user, feeds)
+                .stream()
                 .map(LikeDTO::new)
                 .collect(Collectors.toList());
-//        return likesRepository.findByUserAndFeedIn(user, feeds).stream().map(LikeDTO::new).collect(Collectors.toList());
     }
 }

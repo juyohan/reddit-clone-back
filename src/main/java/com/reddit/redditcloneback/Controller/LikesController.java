@@ -16,6 +16,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class LikesController {
     private final LikesService likesService;
 
+    // 좋아요를 눌렀을 때
     @PostMapping
     public ResponseEntity<Integer> likes(@RequestBody LikeDTO likeDTO) {
         Integer likeCount = likesService.like(likeDTO);

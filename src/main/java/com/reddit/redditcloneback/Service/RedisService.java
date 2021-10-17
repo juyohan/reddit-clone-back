@@ -1,6 +1,6 @@
 package com.reddit.redditcloneback.Service;
 
-import com.reddit.redditcloneback.AuthKey.TempKey;
+import com.reddit.redditcloneback.Key.TempKey;
 import com.reddit.redditcloneback.RedisDAO.RedisAuthKey;
 import com.reddit.redditcloneback.Repository.RedisAuthKeyRepository;
 import io.lettuce.core.RedisException;

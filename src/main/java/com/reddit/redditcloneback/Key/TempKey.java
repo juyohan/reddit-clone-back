@@ -1,4 +1,4 @@
-package com.reddit.redditcloneback.AuthKey;
+package com.reddit.redditcloneback.Key;
 
 import java.util.Random;
 

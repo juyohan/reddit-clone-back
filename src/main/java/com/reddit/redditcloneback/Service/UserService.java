@@ -43,8 +43,6 @@ public class UserService {
     public User getCurrentUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 //        System.out.println("SecurityContextHolder.getContext().getAuthentication() = " + SecurityContextHolder.getContext().getAuthentication());
-        System.out.println("principal = " + principal);
-
         // 정보가 없을 경우
         if (principal.equals("anonymousUser"))
             return null;

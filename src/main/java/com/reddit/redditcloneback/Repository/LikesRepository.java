@@ -16,6 +16,8 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
     Optional<Likes> findByFeedAndUserOrderByIdDesc(Feed feed, User user);
 
     // 가져온 게시글들에서 유저가 누른 정보들 가져옴
-    List<Likes> findByUserAndFeedIn(User user, List<Feed> feeds);
+//    List<Likes> findByUserAndFeedIn(User user, List<Feed> feeds);
+
+    Optional<Likes> findByUserAndFeedIn(User user, List<Feed> feeds);
 
 }

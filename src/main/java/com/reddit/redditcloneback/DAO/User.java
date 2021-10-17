@@ -31,6 +31,8 @@ public class User{
 
     private String username;
 
+    private String userImage;
+
 //    @OneToOne(mappedBy = "user")
 //    @JsonManagedReference
 //    private VerificationToken verificationToken;

@@ -16,14 +16,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class FeedDTO {
 
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-    private LocalDateTime createDate;
+//    @JsonSerialize(using = LocalDateTimeSerializer.class)
+//    @JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
+//    private LocalDateTime createDate;
 
     @Size(max = 300)
     private String title;
     @Lob
-    private String desc;
+    private String content;
 
     private String username;
 

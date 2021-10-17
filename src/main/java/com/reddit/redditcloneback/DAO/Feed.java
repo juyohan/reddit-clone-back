@@ -1,10 +1,6 @@
 package com.reddit.redditcloneback.DAO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -26,9 +22,9 @@ public class Feed extends BasicEntity{
     private String title;
 
     @Lob
-    @Column(name = "FEED_DESC")
-    private String desc;
-    private String url;
+    private String content;
+
+    private String feedKey;
 //    private String path;
 
     // 이거 조인이 되어서 검색이 됌.
@@ -40,6 +36,9 @@ public class Feed extends BasicEntity{
     // like_count의 기본 값을 0으로 설정
     @Column(name = "LIKE_COUNT", columnDefinition = "integer default 0")
     private Integer likeCount;
+
+    @OneToMany(mappedBy = "feed", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    private List<File> files = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "feed", fetch = FetchType.LAZY)
 //    private List<Likes> likes = new ArrayList<>();
