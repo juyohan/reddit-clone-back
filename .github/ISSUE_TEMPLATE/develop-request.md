@@ -1,22 +1,20 @@
 ---
-name: Develop Issues
+name: Develop request
 about: Suggest an idea for this project
-title: "[DEVELOP] develop name"
-labels: Develop
+title: ''
+labels: ''
 assignees: ''
 
 ---
 
-## Description
+**Is your feature request related to a problem? Please describe.**
+A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
-<!-- description -->
+**Describe the solution you'd like**
+A clear and concise description of what you want to happen.
 
-## Branch
+**Describe alternatives you've considered**
+A clear and concise description of any alternative solutions or features you've considered.
 
-<!-- develop/[develop name] -->
-
-## Progress
-
-- [ ] todo1
-- [ ] todo2
-- [ ] todo3
+**Additional context**
+Add any other context or screenshots about the feature request here.
