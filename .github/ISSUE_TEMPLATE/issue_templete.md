@@ -10,7 +10,7 @@ assignees: ''
 ---
 name: Develop Issues
 about: Suggest an idea for this project
-title: "[Develop] develop name"
+title: "[DEVELOP] develop name"
 labels: Develop
 assignees: ''
 
