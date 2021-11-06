@@ -1,6 +1,6 @@
 ---
 name: ISSUE_TEMPLETE
-about: Suggest an idea for this project
+about: deveop issue
 title: ''
 labels: ''
 assignees: ''
@@ -8,10 +8,10 @@ assignees: ''
 ---
 
 ---
-name: Feature Issues
+name: Develop Issues
 about: Suggest an idea for this project
-title: "[FEATURE] feature name"
-labels: Feature
+title: "[Develop] develop name"
+labels: Develop
 assignees: ''
 
 ---
@@ -22,7 +22,7 @@ assignees: ''
 
 ## Branch
 
-<!-- feature/[feature name] -->
+<!- develop/[develop name] -->
 
 ## Progress
 
