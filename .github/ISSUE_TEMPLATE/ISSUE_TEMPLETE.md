@@ -1,13 +1,4 @@
 ---
-name: ISSUE_TEMPLETE
-about: deveop issue
-title: ''
-labels: ''
-assignees: ''
-
----
-
----
 name: Develop Issues
 about: Suggest an idea for this project
 title: "[DEVELOP] develop name"
