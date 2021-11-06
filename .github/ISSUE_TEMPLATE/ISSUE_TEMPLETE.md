@@ -2,7 +2,7 @@
 name: Develop Issues
 about: Suggest an idea for this project
 title: "[DEVELOP] develop name"
-labels: Develop
+labels: ''
 assignees: ''
 
 ---
