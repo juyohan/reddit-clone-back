@@ -1,5 +1,6 @@
 package com.reddit.redditcloneback.JWT;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+@Slf4j
 public class JwtFilter extends GenericFilterBean {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
@@ -32,6 +34,7 @@ public class JwtFilter extends GenericFilterBean {
 
         if (StringUtils.hasText(jwt) && jwtProvider.validateToken(jwt)) {
             Authentication authentication = jwtProvider.parseJws(jwt, response);
+            log.info("JWT Authentication : {}", authentication);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
             logger.debug("유효한 토큰이 없다. uri : {}", requestURI);

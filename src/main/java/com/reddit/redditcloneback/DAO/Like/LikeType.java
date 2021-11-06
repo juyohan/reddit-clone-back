@@ -1,4 +1,4 @@
-package com.reddit.redditcloneback.DAO;
+package com.reddit.redditcloneback.DAO.Like;
 
 import com.reddit.redditcloneback.Error.SpringRedditException;
 

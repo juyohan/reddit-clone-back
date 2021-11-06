@@ -1,7 +1,6 @@
-package com.reddit.redditcloneback.DAO;
+package com.reddit.redditcloneback.DAO.User;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.reddit.redditcloneback.DAO.User.User;
 import lombok.*;
 
 import javax.persistence.*;

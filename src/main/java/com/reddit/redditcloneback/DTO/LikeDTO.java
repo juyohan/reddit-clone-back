@@ -1,7 +1,7 @@
 package com.reddit.redditcloneback.DTO;
 
-import com.reddit.redditcloneback.DAO.LikeType;
-import com.reddit.redditcloneback.DAO.Likes;
+import com.reddit.redditcloneback.DAO.Like.LikeType;
+import com.reddit.redditcloneback.DAO.Like.Likes;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

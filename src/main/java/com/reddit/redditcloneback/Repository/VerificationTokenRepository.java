@@ -1,7 +1,7 @@
 package com.reddit.redditcloneback.Repository;
 
-import com.reddit.redditcloneback.DAO.User;
-import com.reddit.redditcloneback.DAO.VerificationToken;
+import com.reddit.redditcloneback.DAO.User.User;
+import com.reddit.redditcloneback.DAO.User.VerificationToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -19,7 +19,7 @@ public class SecurityUtil {
 
     // Security Context에 유저의 인증정보가 있는지 확인하는 메소드
     public static Optional<String> getCurrentUsername() {
-        System.out.println("인증정보가 있는지 확인합니다요~");
+//        System.out.println("인증정보가 있는지 확인합니다요~");
         // JwtFilter 에서 doFilter 에서 저장되는 인증정보가 꺼내지게 되는 것이다.
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         System.out.println("authentication = " + authentication);

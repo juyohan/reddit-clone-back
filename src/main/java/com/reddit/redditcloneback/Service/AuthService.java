@@ -1,6 +1,8 @@
 package com.reddit.redditcloneback.Service;
 
-import com.reddit.redditcloneback.DAO.*;
+import com.reddit.redditcloneback.DAO.User.Authority;
+import com.reddit.redditcloneback.DAO.User.User;
+import com.reddit.redditcloneback.DAO.User.VerificationToken;
 import com.reddit.redditcloneback.DTO.JwtTokenDTO;
 import com.reddit.redditcloneback.DTO.LoginDTO;
 import com.reddit.redditcloneback.DTO.UserDTO;
@@ -9,23 +11,18 @@ import com.reddit.redditcloneback.JWT.JwtProvider;
 import com.reddit.redditcloneback.RedisDAO.RedisAuthKey;
 import com.reddit.redditcloneback.Repository.*;
 import com.reddit.redditcloneback.Util.SecurityUtil;
-import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.RedisKeyExpiredEvent;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 

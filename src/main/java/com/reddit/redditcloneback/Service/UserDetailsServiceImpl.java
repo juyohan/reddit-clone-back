@@ -3,7 +3,6 @@ package com.reddit.redditcloneback.Service;
 import com.reddit.redditcloneback.Repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,10 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component("userDetailService")
@@ -42,7 +38,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return userDetails;
     }
 
-    private User createUser(String username, com.reddit.redditcloneback.DAO.User user) {
+    private User createUser(String username, com.reddit.redditcloneback.DAO.User.User user) {
         // 비활성화가 되어있으면 예외를 던지고 멈춘다.
         if (user.isEnable() == false) {
             throw new RuntimeException(username + "활성화가 되어있지 않음.");

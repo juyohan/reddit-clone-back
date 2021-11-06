@@ -1,19 +1,18 @@
 package com.reddit.redditcloneback.Controller;
 
-import com.reddit.redditcloneback.DAO.Feed;
-import com.reddit.redditcloneback.DTO.FeedDTO;
-import com.reddit.redditcloneback.DTO.RequestFeedDTO;
+import com.reddit.redditcloneback.DAO.Feed.Feed;
+import com.reddit.redditcloneback.DTO.FeedDTO.RequestFeedDTO;
+import com.reddit.redditcloneback.DTO.FeedDTO.ResponseModifyFeedDTO;
 import com.reddit.redditcloneback.DTO.Result;
 import com.reddit.redditcloneback.Service.FeedService;
-import org.hibernate.annotations.Parameter;
-import org.springframework.data.domain.Page;
+import com.reddit.redditcloneback.Service.FeedFilesService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,21 +22,36 @@ import java.util.List;
 public class FeedController {
 
     private final FeedService feedService;
+    private final FeedFilesService feedFilesService;
 
-    public FeedController(FeedService feedService) {
+    public FeedController(FeedService feedService, FeedFilesService feedFilesService) {
         this.feedService = feedService;
+        this.feedFilesService = feedFilesService;
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Feed> saveFeed(@RequestBody RequestFeedDTO requestFeedDTO) {
-        Feed feed = feedService.saveFeed(requestFeedDTO);
-        return new ResponseEntity<>(feed, HttpStatus.OK);
+    public ResponseEntity<String> saveFeed(@RequestPart("feed-dto") RequestFeedDTO requestFeedDTO,
+                                           @RequestParam(value = "files") List<MultipartFile> multipartFileList
+                                         ) {
+        Feed feed = feedService.createFeed(requestFeedDTO, multipartFileList);
+
+        return new ResponseEntity<>(feed.getFeedKey(), HttpStatus.OK);
     }
 
     @GetMapping("/modify")
-    public ResponseEntity<Feed> modifiedFeed(@RequestBody FeedDTO feedDTO) {
-        Feed feed = feedService.modifiedFeed(feedDTO);
-        return new ResponseEntity<>(feed, HttpStatus.OK);
+    public ResponseEntity<ResponseModifyFeedDTO> modifiedFeed(@RequestParam("feedKey") String feedKey) {
+        ResponseModifyFeedDTO responseModifyFeedDTO = feedService.mappingModifyFeedDTO(feedKey);
+        return new ResponseEntity<>(responseModifyFeedDTO, HttpStatus.OK);
+    }
+
+    @PostMapping("/modify/save")
+    public ResponseEntity<String> modifiedSaveFeed(@RequestPart("feed-dto") RequestFeedDTO requestFeedDTO,
+                                             @RequestParam(value = "files") List<MultipartFile> multipartFiles,
+                                             @RequestParam("feedKey") String feedKey) {
+        feedService.modifiedSaveFeed(feedKey, requestFeedDTO, multipartFiles);
+
+
+        return new ResponseEntity<String>(HttpStatus.OK);
     }
 
 //    @GetMapping("/{username}")
@@ -49,14 +63,17 @@ public class FeedController {
     public ResponseEntity<Result> getNewPost(@PageableDefault(size = 8, direction = Sort.Direction.DESC, sort = "CreateDate") Pageable pageable) {
         return new ResponseEntity<>(feedService.newFindFeeds(pageable), HttpStatus.OK);
     }
+
     @GetMapping(value = {"/hot", "/"})
     public ResponseEntity<Result> getHotPost(@PageableDefault(size = 8) Pageable pageable) {
         return new ResponseEntity<>(feedService.hotFindFeeds(pageable), HttpStatus.OK);
     }
+
     @GetMapping("/rising")
     public ResponseEntity<Result> getRisingPost(@PageableDefault(size = 8) Pageable pageable) {
         return new ResponseEntity<>(feedService.risingFindFeeds(pageable), HttpStatus.OK);
     }
+
     @GetMapping("/top")
     public ResponseEntity<Result> getTopPost(@PageableDefault(size = 8, direction = Sort.Direction.DESC, sort = "likeCount") Pageable pageable) {
         return new ResponseEntity<>(feedService.topFindFeeds(pageable), HttpStatus.OK);

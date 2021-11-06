@@ -1,8 +1,8 @@
 package com.reddit.redditcloneback.Service;
 
-import com.reddit.redditcloneback.DAO.Feed;
-import com.reddit.redditcloneback.DAO.Likes;
-import com.reddit.redditcloneback.DAO.User;
+import com.reddit.redditcloneback.DAO.Feed.Feed;
+import com.reddit.redditcloneback.DAO.Like.Likes;
+import com.reddit.redditcloneback.DAO.User.User;
 import com.reddit.redditcloneback.DTO.LikeDTO;
 import com.reddit.redditcloneback.Error.FeedNotFoundException;
 import com.reddit.redditcloneback.Repository.FeedRepository;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.reddit.redditcloneback.DAO.LikeType.UPLIKE;
+import static com.reddit.redditcloneback.DAO.Like.LikeType.UPLIKE;
 
 @Service
 @AllArgsConstructor
@@ -79,10 +79,9 @@ public class LikesService {
         likesRepository.deleteById(likes.get().getId());
     }
 
+    // 좋아요의 정보를 찾음
     public List<LikeDTO> likes(List<Feed> feeds) {
-        System.out.println("=============================================");
         User user = userService.getCurrentUser();
-        System.out.println("=============================================");
 
         // 현재 로그인을 하지 않았다면
         if (user == null)

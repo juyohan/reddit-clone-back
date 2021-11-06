@@ -1,14 +1,12 @@
-package com.reddit.redditcloneback.DAO;
+package com.reddit.redditcloneback.DAO.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.reddit.redditcloneback.DAO.Comment.Comment;
 import lombok.*;
 
 
 import javax.persistence.*;
 import java.util.*;
-
-import static javax.persistence.CascadeType.*;
 
 
 @Entity
@@ -31,7 +29,13 @@ public class User{
 
     private String username;
 
-    private String userImage;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_PHOTO_ID")
+    private UserPhoto userPhoto;
+
+    // 필요 없을 수 있음.
+    @OneToMany(mappedBy = "user" ,fetch = FetchType.LAZY)
+    private List<Comment> comment = new ArrayList<>();
 
 //    @OneToOne(mappedBy = "user")
 //    @JsonManagedReference

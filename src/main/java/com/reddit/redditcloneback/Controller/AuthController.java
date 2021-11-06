@@ -1,6 +1,6 @@
 package com.reddit.redditcloneback.Controller;
 
-import com.reddit.redditcloneback.DAO.User;
+import com.reddit.redditcloneback.DAO.User.User;
 import com.reddit.redditcloneback.DTO.JwtTokenDTO;
 import com.reddit.redditcloneback.DTO.LoginDTO;
 import com.reddit.redditcloneback.DTO.UserDTO;
@@ -9,13 +9,11 @@ import com.reddit.redditcloneback.JWT.JwtFilter;
 import com.reddit.redditcloneback.Service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -36,7 +34,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(@Valid @RequestBody UserDTO userDTO) {
         String authKey = authService.signUp(userDTO);
-            return new ResponseEntity<>(authKey, OK);
+        return new ResponseEntity<>(authKey, OK);
     }
 
     // 이메일 인증
@@ -122,8 +120,7 @@ public class AuthController {
             User user = authService.sendToMailFindPw(userDTO.getEmail());
             System.out.println("AuthController.user = " + user);
             return new ResponseEntity<>("성공", OK);
-        }
-        else
+        } else
             return new ResponseEntity<>("이메일 없움", FORBIDDEN);
     }
 

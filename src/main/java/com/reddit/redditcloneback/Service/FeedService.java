@@ -1,8 +1,12 @@
 package com.reddit.redditcloneback.Service;
 
-import com.reddit.redditcloneback.DAO.Feed;
-import com.reddit.redditcloneback.DAO.User;
+import com.reddit.redditcloneback.DAO.Feed.Feed;
+import com.reddit.redditcloneback.DAO.Feed.FeedFiles;
+import com.reddit.redditcloneback.DAO.User.User;
 import com.reddit.redditcloneback.DTO.*;
+import com.reddit.redditcloneback.DTO.FeedDTO.RequestFeedDTO;
+import com.reddit.redditcloneback.DTO.FeedDTO.ResponseFeedDTO;
+import com.reddit.redditcloneback.DTO.FeedDTO.ResponseModifyFeedDTO;
 import com.reddit.redditcloneback.Error.FeedNotFoundException;
 import com.reddit.redditcloneback.Key.TempKey;
 import com.reddit.redditcloneback.Repository.FeedRepository;
@@ -11,10 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -28,39 +34,51 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FeedService {
 
-    private FeedRepository feedRepository;
-    private UserService userService;
-    private LikesService likesService;
+    private final FeedRepository feedRepository;
 
-    // 피드 저장
-    public Feed saveFeed(RequestFeedDTO requestFeedDTO) {
+    private final UserService userService;
+    private final LikesService likesService;
+    private final FeedFilesService feedFilesService;
+
+    // 피드 생성
+    public Feed createFeed(RequestFeedDTO requestFeedDTO,
+                           List<MultipartFile> multipartFiles) {
         // 로그인 되어있는 사용자 정보 가져옴
         User user = userService.loginAfterFindUserName();
+
         // 지정 URL 설정
         String key = new TempKey().getKey(6, false);
 
-        Feed feed = Feed.builder()
-                .title(requestFeedDTO.getTitle())
-                .content(requestFeedDTO.getContent())
-                .user(user)
-                // 처음 좋아요는 0으로 Default
-                .likeCount(0)
-                .feedKey(key)
-                .build();
-
-        // 생성된 시간 저장
+        Feed feed = new Feed();
+        feed.setUser(user);
+        feed.setFeedKey(key);
         feed.setCreateDate(LocalDateTime.now());
+        feed.setTitle(requestFeedDTO.getTitle());
+        feed.setFeedContent(requestFeedDTO.getFeedContent());
+        feed.setLikeCount(0);
+
+        if (!multipartFiles.isEmpty()) {
+            List<FeedFiles> files = feedFilesService.loadFiles(multipartFiles);
+
+            if (!files.isEmpty()) {
+                for (FeedFiles file : files) {
+                    file.addFeed(feed);
+                }
+            }
+        }
 
         return feedRepository.save(feed);
     }
 
     // 피드 수정
-    public Feed modifiedFeed(FeedDTO feedDTO) {
-        User user = userService.loginAfterFindUserName();
+    public void modifiedSaveFeed(String feedKey,
+                                 RequestFeedDTO requestFeedDTO,
+                                 List<MultipartFile> multipartFiles) {
+        Feed feed = searchWithFeedKey(feedKey);
+        feed.setTitle(requestFeedDTO.getTitle());
+        feed.setFeedContent(requestFeedDTO.getFeedContent());
 
-        Feed feed = feedRepository.findByUserAndId(user, feedDTO.getFeedId()).orElseThrow(() -> new FeedNotFoundException("없는 유저나 피드입니다."));
 
-        return feed;
     }
 
     // hot은 2틀전부터 현재까지 게시글들 중에서 like의 수가 20이상인 게시글들만 가져옴 (랜덤으로 출력하는건 frontend에서 처리)
@@ -81,6 +99,9 @@ public class FeedService {
         // 모든 feed에서 createDate 이름의 컬럼을 기준으로 최신순으로 정렬한 뒤 보냄
         Page<Feed> feedPage = feedRepository.findAll(pageable);
 
+//        List<Feed> feeds = feedRepository.findAll(pageable);
+
+//        Page<Feed> feedPage = feedRepository.findAllWithFiles(pageable);
         return mergeFeed(feedPage.getContent(), feedPage.getTotalPages());
 //        return feedRepository.findAll(pageable);
     }
@@ -113,10 +134,15 @@ public class FeedService {
         return new Result(responseFeedDTOS, total);
     }
 
-//  클라이언트에게 보낼 Data 가공
+    //  클라이언트에게 보낼 Data 가공
     private List<ResponseFeedDTO> mappingFeedAndLikesToResponseFeed(List<Feed> feeds, List<LikeDTO> likes) {
         // 가져온 게시글들을 DTO로 변환
-        List<ResponseFeedDTO> responseFeedDTOS = feeds.stream().map(ResponseFeedDTO::new).collect(Collectors.toList());
+        List<ResponseFeedDTO> responseFeedDTOS = feeds.stream().map(feed -> {
+            List<String> fileNames = new ArrayList<>();
+            if (!feed.getFiles().isEmpty())
+                fileNames = feedFilesService.findFileNames(feed.getFiles());
+            return new ResponseFeedDTO(feed, fileNames);
+        }).collect(Collectors.toList());
 
         // 좋아요의 값이 없는 경우
         if (likes == null)
@@ -133,6 +159,23 @@ public class FeedService {
         };
 
         responseFeedDTOS.stream().forEach(dtoConsumer);
+
         return responseFeedDTOS;
+    }
+
+    public Feed searchWithFeedKey(String feedKey) {
+        return feedRepository.findByFeedKey(feedKey).orElseThrow(
+                () -> new FeedNotFoundException("존재하지 않는 게시글입니다.")
+        );
+    }
+
+    public ResponseModifyFeedDTO mappingModifyFeedDTO(String feedKey) {
+        Feed feed = searchWithFeedKey(feedKey);
+        ResponseModifyFeedDTO responseModifyFeedDTO = new ResponseModifyFeedDTO();
+        responseModifyFeedDTO.setTitle(feed.getTitle());
+        responseModifyFeedDTO.setFeedContent(feed.getFeedContent());
+        responseModifyFeedDTO.setFiles(feed.getFiles());
+
+        return responseModifyFeedDTO;
     }
 }

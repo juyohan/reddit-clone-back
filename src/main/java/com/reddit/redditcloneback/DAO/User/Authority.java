@@ -1,4 +1,4 @@
-package com.reddit.redditcloneback.DAO;
+package com.reddit.redditcloneback.DAO.User;
 
 import lombok.*;
 import org.springframework.stereotype.Service;

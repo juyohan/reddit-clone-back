@@ -1,9 +1,10 @@
-package com.reddit.redditcloneback.DAO;
+package com.reddit.redditcloneback.DAO.Like;
 
+import com.reddit.redditcloneback.DAO.Feed.Feed;
+import com.reddit.redditcloneback.DAO.User.User;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter

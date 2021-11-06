@@ -1,80 +1,88 @@
 package com.reddit.redditcloneback.Controller;
 
-import com.reddit.redditcloneback.DTO.FeedDTO;
+import com.reddit.redditcloneback.DAO.Feed.FeedFiles;
+import com.reddit.redditcloneback.DAO.User.UserPhoto;
+import com.reddit.redditcloneback.Service.FeedFilesService;
+import com.reddit.redditcloneback.Service.UserPhotoService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.StreamUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourceRegion;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Collection;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
-@Slf4j
 @RequestMapping("api/file")
 public class FileController {
 
     @Value("${spring.servlet.multipart.location}")
-    private final String fileUploadDirectory;
+    private String filesUploadDirectory;
 
-    // Servlet 을 사용해서 파일을 저장
-    @PostMapping("/upload")
-    public String saveFile(HttpServletRequest request) throws ServletException, IOException {
-        log.info("request : {}", request);
+    private final FeedFilesService feedFilesService;
+    private final UserPhotoService userPhotoService;
 
-        String sampleStringData = request.getParameter("sampleStringData");
+    // User의 프로필 사진 보기
+    @GetMapping(value = "/user/image",
+            produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE}
+    )
+    public ResponseEntity<byte[]> viewUserImage(@RequestParam("fileName") String fileName) {
+        byte[] bytes = feedFilesService.convertByte(fileName, "User/");
 
-        log.info("sampleStringData : {}", sampleStringData);
-
-        Collection<Part> partCollection = request.getParts();
-
-        for (Part part : partCollection) {
-            Collection<String> headerNames = part.getHeaderNames();
-
-            for (String headerName : headerNames) {
-                log.info("header {} : {}", headerName, part.getHeaderNames());
-            }
-
-            InputStream inputStream = part.getInputStream();
-            StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
-
-            if (StringUtils.hasText(part.getSubmittedFileName())) {
-                String downloadPath = fileUploadDirectory + part.getSubmittedFileName();
-
-                log.info("파일 저장경로 : {} ", downloadPath);
-
-                part.write(downloadPath);
-            }
-        }
-        return "upload-form";
+        return new ResponseEntity<byte[]>(bytes,HttpStatus.OK);
     }
 
-    // spring 을 사용해서 파일을 저장
-    @PostMapping("/upload2")
-    public String saveFile2(@RequestPart("feed-dto") FeedDTO feedDTO,
-                            @RequestParam("file") List<MultipartFile> multipartFiles,
-                            HttpServletRequest request) throws IOException {
+    // User의 프로필 사진 저장
+    @PostMapping("/user/save")
+    public ResponseEntity<String> saveUserImage(@RequestParam("files") MultipartFile multipartFile) {
+        UserPhoto userPhoto = userPhotoService.loadUserImage(multipartFile);
 
-        for (MultipartFile multipartFile : multipartFiles) {
-            if (!multipartFile.isEmpty()) {
-                String downloadPath = fileUploadDirectory + multipartFile.getOriginalFilename();
-                // 파일 저장
-                multipartFile.transferTo(new File(downloadPath));
-            }
+        return new ResponseEntity<String>(userPhoto.getAfterFileName(), HttpStatus.OK);
+    }
+
+    // 이미지 접근
+    @GetMapping(value = "/image",
+            produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE}
+    )
+    public ResponseEntity<byte[]> viewImage(@RequestParam("fileName") String fileName) {
+        byte[] bytes = feedFilesService.convertByte(fileName, "Feed/");
+
+        return new ResponseEntity<>(bytes, HttpStatus.OK);
+    }
+
+    // 동영상 접근
+    @GetMapping(value = "video")
+    public ResponseEntity<ResourceRegion> viewVideo(@RequestParam("fileName") String fileName,
+                                                    @RequestHeader HttpHeaders httpHeaders
+                                                    ) throws IOException {
+         Resource resource = new FileSystemResource(filesUploadDirectory + "Feed/" + fileName);
+
+        final long chunkSize = 1024 * 1024 * 1;
+        ResourceRegion region = null;
+        long videoLength = resource.contentLength();
+        long length = 0;
+
+        try {
+            HttpRange httpRange = httpHeaders.getRange().stream().findFirst().get();
+            long start = httpRange.getRangeStart(videoLength);
+            long end = httpRange.getRangeEnd(videoLength);
+            length = end - start + 1;
+            long rangeLength = Long.min(chunkSize, length);
+            region = new ResourceRegion(resource, start, rangeLength);
+        } catch (Exception e) {
+            System.out.println("e = " + e);
         }
 
-        return "upload-form";
+        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).cacheControl(CacheControl.maxAge(10, TimeUnit.MINUTES))
+                .contentType(MediaTypeFactory.getMediaType(resource).orElse(MediaType.APPLICATION_OCTET_STREAM))
+                .header("Accept-Ranges", "bytes")
+                .eTag(fileName)
+                .body(region);
     }
+
 }

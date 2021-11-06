@@ -1,7 +1,7 @@
 package com.reddit.redditcloneback.Service;
 
 import com.reddit.redditcloneback.Key.TempKey;
-import com.reddit.redditcloneback.DAO.User;
+import com.reddit.redditcloneback.DAO.User.User;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
