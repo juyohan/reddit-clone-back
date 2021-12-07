@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 public class Comment extends BasicEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "COMMENT_ID")
     private Long id;
 
@@ -30,10 +30,10 @@ public class Comment extends BasicEntity {
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    public void addUser(User user) {
-        this.user = user;
-        user.getComment().add(this);
-    }
+//    public void addUser(User user) {
+//        this.user = user;
+////        user.getComment().add(this);
+//    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FEED_ID")

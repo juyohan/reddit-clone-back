@@ -8,8 +8,4 @@ import lombok.Data;
 public class Result<T> {
     private T data;
     private int totalPage;
-
-//    public Result(T f) {
-//        this.data = feedPage;
-//    }
 }

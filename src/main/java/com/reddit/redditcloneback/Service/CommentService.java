@@ -31,11 +31,11 @@ public class CommentService {
         User user = userService.getCurrentUser();
         if (user == null)
             log.info("로그인이 되어있는 아이디가 아닙니다.");
-        Feed feed = feedService.searchWithFeedKey(requestCommentDTO.getFeedKey());
+        Feed feed = feedService.searchWithFeedKey(requestCommentDTO.getKey());
 
         Comment comment = new Comment();
         comment.setContent(requestCommentDTO.getContent());
-        comment.addUser(user);
+        comment.setUser(user);
         comment.addFeed(feed);
         comment.setCreateDate(LocalDateTime.now());
 
@@ -45,18 +45,18 @@ public class CommentService {
     public Result getComment(Pageable pageable, String feedKey) {
         Feed feed = feedService.searchWithFeedKey(feedKey);
 //        Page<Comment> comments = commentRepository.findAllByFeed(feed, pageable);
-        List<Comment> comments1 = commentRepository.findByFeedId(feed.getId());
+//        List<Comment> comments1 = commentRepository.findByFeedId(feed.getId());
         System.out.println("=====================================================");
 //        Page<Comment> comments = commentRepository.findAll(pageable);
         Page<Comment> comments = commentRepository.findByFeedId(feed.getId(), pageable);
 //        List<ResponseCommentDTO> responseCommentDTOS = mappingToCommentDTO(comments.getContent());
-        List<ResponseCommentDTO> responseCommentDTOS = mappingToCommentDTO(comments.getContent());
+        List<ResponseCommentDTO> responseCommentDTOS = mappingToCommentDTO(comments.getContent(), feedKey);
 
 //        return new Result(responseCommentDTOS, comments.getTotalPages());
         return new Result(responseCommentDTOS, comments.getTotalPages());
     }
 
-    private List<ResponseCommentDTO> mappingToCommentDTO(List<Comment> commentList) {
+    private List<ResponseCommentDTO> mappingToCommentDTO(List<Comment> commentList, String feedKey) {
         List<ResponseCommentDTO> responseCommentDTOS = commentList.stream().map(ResponseCommentDTO::new).collect(Collectors.toList());
 
         return responseCommentDTOS;

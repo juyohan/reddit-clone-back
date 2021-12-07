@@ -3,19 +3,23 @@ package com.reddit.redditcloneback.Controller;
 import com.reddit.redditcloneback.DAO.User.User;
 import com.reddit.redditcloneback.DTO.JwtTokenDTO;
 import com.reddit.redditcloneback.DTO.LoginDTO;
-import com.reddit.redditcloneback.DTO.UserDTO;
+import com.reddit.redditcloneback.DTO.UserDTO.RequestUserDTO;
 import com.reddit.redditcloneback.Error.SpringRedditException;
+import com.reddit.redditcloneback.Error.UserNotEmailVerificationException;
 import com.reddit.redditcloneback.JWT.JwtFilter;
 import com.reddit.redditcloneback.Service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+
+import java.io.IOException;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -32,8 +36,8 @@ public class AuthController {
 
     // 회원가입
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@Valid @RequestBody UserDTO userDTO) {
-        String authKey = authService.signUp(userDTO);
+    public ResponseEntity<String> signUp(@Valid @RequestBody RequestUserDTO requestUserDTO) {
+        String authKey = authService.signUp(requestUserDTO);
         return new ResponseEntity<>(authKey, OK);
     }
 
@@ -53,97 +57,79 @@ public class AuthController {
 
     // 아이디 중복 확인
     @PostMapping("/check/username")
-    public ResponseEntity<String> checkUsername(@RequestBody UserDTO userDTO) {
-        boolean result = authService.checkUsername(userDTO.getUsername());
+    public ResponseEntity<String> checkUsername(@RequestBody RequestUserDTO requestUserDTO) {
+        boolean result = authService.checkUsername(requestUserDTO.getUsername());
         if (result)
-            return new ResponseEntity<>(userDTO.getUsername(), OK);
+            return new ResponseEntity<>(requestUserDTO.getUsername(), OK);
         else
             return new ResponseEntity<>(null, NOT_ACCEPTABLE);
     }
 
     // email 중복 확인
     @PostMapping("/check/email")
-    public ResponseEntity<String> checkEmail(@RequestBody UserDTO userDTO) {
-        boolean result = authService.checkEmail(userDTO.getEmail());
+    public ResponseEntity<String> checkEmail(@RequestBody RequestUserDTO requestUserDTO) {
+        boolean result = authService.checkEmail(requestUserDTO.getEmail());
         if (result)
-            return new ResponseEntity<>(userDTO.getEmail(), OK);
+            return new ResponseEntity<>(requestUserDTO.getEmail(), OK);
         else
             return new ResponseEntity<>(null, NOT_ACCEPTABLE);
     }
 
     // 로그인
-//    @PostMapping(value = "/login")
-//    public ResponseEntity<Object> login(@Valid @RequestBody LoginDTO loginDTO) {
-//        try {
-//            JwtTokenDTO jwtTokenDTO = authService.login(loginDTO);
-//
-////        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//
-//            HttpHeaders httpHeaders = new HttpHeaders();
-//            httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwtTokenDTO.getJwtToken());
-//
-//            return new ResponseEntity<>(jwtTokenDTO, OK);
-//        }  // UserDetailsService에서 던진 Exception을 받아서 여기서 처리한다.
-//        catch (RuntimeException runtimeException) {
-//            System.out.println("받은 예외 = " + runtimeException);
-//            return new ResponseEntity<>(loginDTO.getEmail(), UNAUTHORIZED);
-//        }
-//    }
-
     @PostMapping(value = "/login")
     public ResponseEntity<Object> login(@Valid @RequestBody LoginDTO loginDTO, HttpServletResponse response) {
         try {
             JwtTokenDTO jwtTokenDTO = authService.login(loginDTO);
-
             response.addHeader(JwtFilter.AUTHORIZATION_HEADER, jwtTokenDTO.getJwtToken());
 
             System.out.println("SecurityContextHolder = " + SecurityContextHolder.getContext().getAuthentication());
+            System.out.println("jwtTokenDTO = " + jwtTokenDTO.getUsername());
 
-            return new ResponseEntity<>(jwtTokenDTO.getUsername(), OK);
-        }
-//        catch (InternalAuthenticationServiceException internalAuthenticationServiceException) {
-//            System.out.println("internalAuthenticationServiceException = " + internalAuthenticationServiceException);
-//            return new ResponseEntity<>(internalAuthenticationServiceException, FORBIDDEN);
-//        }
-        // UserDetailsService에서 던진 Exception을 받아서 여기서 처리한다.
-        catch (BadCredentialsException badCredentialsException) {
+            return new ResponseEntity<>(jwtTokenDTO, OK);
+        } catch (BadCredentialsException badCredentialsException) {
             System.out.println("badCredentialsException = " + badCredentialsException);
             return new ResponseEntity<>(badCredentialsException, UNAUTHORIZED);
         }
     }
 
+    // 비밀번호 찾기
     @PostMapping("/find/pw")
-    public ResponseEntity<String> findPw(@RequestBody UserDTO userDTO) {
-        boolean result = authService.checkEmail(userDTO.getEmail());
+    public ResponseEntity<String> findPw(@RequestBody RequestUserDTO requestUserDTO) {
+        boolean result = authService.checkEmail(requestUserDTO.getEmail());
         System.out.println("result = " + result);
         if (!result) {
-            User user = authService.sendToMailFindPw(userDTO.getEmail());
+            User user = authService.sendToMailFindPw(requestUserDTO.getEmail());
             System.out.println("AuthController.user = " + user);
             return new ResponseEntity<>("성공", OK);
         } else
             return new ResponseEntity<>("이메일 없움", FORBIDDEN);
     }
 
-//    @PostMapping("/logout")
-//    public ResponseEntity userLogout(HttpServletResponse response) {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        System.out.println("auth = " + auth);
-//        if (auth != null && auth.isAuthenticated()) {
-//            SecurityContextHolder.clearContext();
-//        }
-//        System.out.println("auth = " + auth);
-//        return new ResponseEntity(OK);
-//    }
+    // 카카오 로그인
+    @GetMapping("/kakao")
+    public ResponseEntity<String> getKakaoCode(@RequestParam("code") String code, HttpServletResponse response) {
+        try {
+            JwtTokenDTO jwtTokenDTO = authService.getKaKaoToken(code);
+            response.addHeader(JwtFilter.AUTHORIZATION_HEADER, jwtTokenDTO.getJwtToken());
+            return new ResponseEntity<String>(jwtTokenDTO.getUsername(), OK);
+        } catch (NullPointerException e) {
+            return new ResponseEntity<>("false", NOT_FOUND);
+        } catch (UserNotEmailVerificationException e) {
+            System.out.println("e = " + e);
+            return new ResponseEntity<>("email not certification", UNAUTHORIZED);
+        }
+    }
 
-//    @GetMapping("/user")
-//    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-//    public ResponseEntity<User> getMyUserInfo() {
-//        return ResponseEntity.ok(authService.getMyUserWithAuthorities().get());
-//    }
-//
-//    @GetMapping("/user/{username}")
-//    @PreAuthorize("hasAnyRole('ADMIN','USER')")
-//    public ResponseEntity<User> getUserInfo(@PathVariable String username) {
-//        return ResponseEntity.ok(authService.getUserWithAuthorities(username).get());
-//    }
+    // 카카오 연동
+    @PostMapping("/kakao/connect")
+    public ResponseEntity<String> connectKakao(@RequestBody LoginDTO loginDTO, @RequestParam("kakaoId") String kakaoId) {
+        System.out.println("loginDTO = " + loginDTO.toString());
+//        String kakaoId = (String) request.getSession().getAttribute("kakaoId");
+//        System.out.println("kakaoId = " + kakaoId);
+        Boolean kakao = authService.connectKakao(loginDTO, kakaoId);
+        if (kakao)
+            return new ResponseEntity<>("Success", OK);
+        else
+            return new ResponseEntity<>("Fail", NOT_FOUND);
+    }
 }

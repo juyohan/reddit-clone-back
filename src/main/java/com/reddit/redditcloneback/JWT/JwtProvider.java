@@ -1,5 +1,6 @@
 package com.reddit.redditcloneback.JWT;
 
+import com.reddit.redditcloneback.DAO.User.Authority;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
@@ -21,10 +22,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -48,6 +46,15 @@ public class JwtProvider implements InitializingBean {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
+
+    // 일반적인 로그인 시
+//    public String basicCreateJws(Authentication authentication) {
+//        String authorities = authentication.getAuthorities().stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.joining(","));
+//
+//        return createJws(authentication.getName(), authorities);
+//    }
 
     // 토큰을 생성하는 함수
     public String createJws(Authentication authentication) {

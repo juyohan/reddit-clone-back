@@ -15,7 +15,7 @@ import java.util.List;
 public class ResponseModifyFeedDTO {
 
     private String title;
-    private String feedContent;
+    private String content;
     // 엔티티 그대로 넘기는건 좋지 않아보여...
     private List<FeedFiles> files = new ArrayList<>();
 }

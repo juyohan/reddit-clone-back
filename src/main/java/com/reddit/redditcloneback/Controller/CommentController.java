@@ -31,11 +31,13 @@ public class CommentController {
     }
 
     @GetMapping(value = "/get")
-    public ResponseEntity<Result> commentGet(@RequestParam("feedKey") String feedKey,
+    public ResponseEntity<Result> commentGet(@RequestParam("feedKey") String key,
                                              @PageableDefault(size = 6, direction = Sort.Direction.DESC, sort = "CreateDate") Pageable pageable
     ) {
-        Result result = commentService.getComment(pageable, feedKey);
+        Result result = commentService.getComment(pageable, key);
 
         return new ResponseEntity<Result>(result, HttpStatus.OK);
     }
+
+
 }
