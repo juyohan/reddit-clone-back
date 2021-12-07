@@ -18,13 +18,13 @@ public class UserPhoto {
     @Column(name = "USER_PHOTO_ID")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "userPhoto")
-    private User user;
-
-    public void addUser(User user) {
-        this.user = user;
-        user.setUserPhoto(this);
-    }
+//    @OneToOne(fetch = FetchType.LAZY, mappedBy = "userPhoto")
+//    private User user;
+//
+//    public void addUser(User user) {
+//        this.user = user;
+//        user.setUserPhoto(this);
+//    }
 
     private String originalFileName;
     private String afterFileName;

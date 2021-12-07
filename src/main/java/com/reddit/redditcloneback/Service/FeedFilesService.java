@@ -57,7 +57,7 @@ public class FeedFilesService {
         }
         if (path == "Feed/")
             return  FeedFiles.builder()
-                    .afterFileName(saveFileName)
+                    .afterFilename(saveFileName)
                     .originalFileName(originalFileName)
                     .filePath(savePath)
                     .fileSize(multipartFile.getSize())
@@ -76,7 +76,7 @@ public class FeedFilesService {
     // 파일의 이미지들을 가져와 이름을 가져옴
     public List<String> findFileNames(List<FeedFiles> files) {
         List<String> fileNames = files.stream().map(file -> {
-            return file.getAfterFileName();
+            return file.getAfterFilename();
         }).collect(Collectors.toList());
 
         return fileNames;

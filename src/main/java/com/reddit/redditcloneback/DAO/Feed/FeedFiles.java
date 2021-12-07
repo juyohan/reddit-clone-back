@@ -34,7 +34,8 @@ public class FeedFiles {
     }
 
     private String originalFileName;
-    private String afterFileName;
+    @Column(name = "after_filename")
+    private String afterFilename;
     private String filePath;
     private Long fileSize;
     private String fileType;

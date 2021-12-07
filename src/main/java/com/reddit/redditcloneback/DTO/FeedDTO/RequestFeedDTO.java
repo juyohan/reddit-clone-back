@@ -14,7 +14,6 @@ import java.util.List;
 public class RequestFeedDTO {
 
     private String title;
-    private String feedContent;
-    private String username;
-
+    private String content;
+    private List<MultipartFile> multipartFiles;
 }

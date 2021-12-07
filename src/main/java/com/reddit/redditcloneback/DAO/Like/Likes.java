@@ -18,11 +18,9 @@ public class Likes {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "LIKES_ID")
     private Long id;
-
     @Enumerated(value = EnumType.STRING)
     private LikeType likeType;
 
-//    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FEED_ID", referencedColumnName = "FEED_ID")
     private Feed feed;

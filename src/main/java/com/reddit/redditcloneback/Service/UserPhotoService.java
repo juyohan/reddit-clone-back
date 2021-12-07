@@ -25,7 +25,7 @@ public class UserPhotoService {
         if (!multipartFile.isEmpty()) {
             User user = userService.getCurrentUser();
             userPhoto = (UserPhoto) feedFilesService.mappingFiles(multipartFile, "User/");
-            userPhoto.addUser(user);
+//            userPhoto.addUser(user);
         }
 
         return userPhotoRepository.save(userPhoto);

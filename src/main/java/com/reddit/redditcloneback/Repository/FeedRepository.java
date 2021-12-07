@@ -28,6 +28,6 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
 
     Optional<Feed> findByUserAndId(User user, Long id);
 
-    Optional<Feed> findByFeedKey(String feedKey);
+    Optional<Feed> findByKey(String key);
 
 }

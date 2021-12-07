@@ -42,7 +42,8 @@ public class FeedService {
 
     // 피드 생성
     public Feed createFeed(RequestFeedDTO requestFeedDTO,
-                           List<MultipartFile> multipartFiles) {
+                           List<MultipartFile> multipartFiles
+                           ) {
         // 로그인 되어있는 사용자 정보 가져옴
         User user = userService.loginAfterFindUserName();
 
@@ -51,13 +52,15 @@ public class FeedService {
 
         Feed feed = new Feed();
         feed.setUser(user);
-        feed.setFeedKey(key);
+        feed.setKey(key);
         feed.setCreateDate(LocalDateTime.now());
         feed.setTitle(requestFeedDTO.getTitle());
-        feed.setFeedContent(requestFeedDTO.getFeedContent());
+        feed.setContent(requestFeedDTO.getContent());
         feed.setLikeCount(0);
 
-        if (!multipartFiles.isEmpty()) {
+//        List<MultipartFile> multipartFiles = requestFeedDTO.getMultipartFiles();
+
+        if (multipartFiles != null) {
             List<FeedFiles> files = feedFilesService.loadFiles(multipartFiles);
 
             if (!files.isEmpty()) {
@@ -76,7 +79,7 @@ public class FeedService {
                                  List<MultipartFile> multipartFiles) {
         Feed feed = searchWithFeedKey(feedKey);
         feed.setTitle(requestFeedDTO.getTitle());
-        feed.setFeedContent(requestFeedDTO.getFeedContent());
+        feed.setContent(requestFeedDTO.getContent());
 
 
     }
@@ -98,7 +101,6 @@ public class FeedService {
     public Result newFindFeeds(Pageable pageable) {
         // 모든 feed에서 createDate 이름의 컬럼을 기준으로 최신순으로 정렬한 뒤 보냄
         Page<Feed> feedPage = feedRepository.findAll(pageable);
-
 //        List<Feed> feeds = feedRepository.findAll(pageable);
 
 //        Page<Feed> feedPage = feedRepository.findAllWithFiles(pageable);
@@ -127,7 +129,7 @@ public class FeedService {
     // 좋아요 검색 후 DTO로 변환한 뒤, 다시 랩핑
     private Result mergeFeed(List<Feed> feeds, int total) {
         // 가져온 피드들에서 로그인한 회원이 좋아요를 누른 피드가 있는지 확인 한 후 반환
-        List<LikeDTO> likes = likesService.likes(feeds);
+        List<LikeDTO> likes = likesService.getLikes(feeds);
         // 클라이언트에게 보낼 데이터 가공
         List<ResponseFeedDTO> responseFeedDTOS = mappingFeedAndLikesToResponseFeed(feeds, likes);
 
@@ -139,16 +141,31 @@ public class FeedService {
         // 가져온 게시글들을 DTO로 변환
         List<ResponseFeedDTO> responseFeedDTOS = feeds.stream().map(feed -> {
             List<String> fileNames = new ArrayList<>();
+            LikeDTO likeDTO = new LikeDTO();
+
             if (!feed.getFiles().isEmpty())
                 fileNames = feedFilesService.findFileNames(feed.getFiles());
+
+//            if (likes != null)
+//                likeDTO = likesService.getLike(likes, feed.getId());
+//
+//            System.out.println("mapping likeDTO = " + likeDTO);
+
             return new ResponseFeedDTO(feed, fileNames);
         }).collect(Collectors.toList());
 
-        // 좋아요의 값이 없는 경우
+//        // 좋아요의 값이 없는 경우
         if (likes == null)
             return responseFeedDTOS;
-
-        // 좋아요를 누른 게시글에 좋아요 값을 넣기 위한 루프
+//        else {
+//            List<ResponseFeedDTO> responseFeedDTOSList = responseFeedDTOS.stream().map(feed -> {
+//                LikeDTO like = likesService.getLike(likes, feed.getFeedId());
+//                ResponseFeedDTO responseFeedDTO = new ResponseFeedDTO(feed, like.getLikeType());
+//                return feed;
+//            })
+//        }
+////
+//        // 좋아요를 누른 게시글에 좋아요 값을 넣기 위한 루프
         Consumer<ResponseFeedDTO> dtoConsumer = responseFeedDTO -> {
             for (LikeDTO likeDTO : likes) {
                 if (likeDTO.getFeedId() == responseFeedDTO.getFeedId()) {
@@ -158,13 +175,14 @@ public class FeedService {
             }
         };
 
+//
         responseFeedDTOS.stream().forEach(dtoConsumer);
 
         return responseFeedDTOS;
     }
 
-    public Feed searchWithFeedKey(String feedKey) {
-        return feedRepository.findByFeedKey(feedKey).orElseThrow(
+    public Feed searchWithFeedKey(String key) {
+        return feedRepository.findByKey(key).orElseThrow(
                 () -> new FeedNotFoundException("존재하지 않는 게시글입니다.")
         );
     }
@@ -173,7 +191,7 @@ public class FeedService {
         Feed feed = searchWithFeedKey(feedKey);
         ResponseModifyFeedDTO responseModifyFeedDTO = new ResponseModifyFeedDTO();
         responseModifyFeedDTO.setTitle(feed.getTitle());
-        responseModifyFeedDTO.setFeedContent(feed.getFeedContent());
+        responseModifyFeedDTO.setContent(feed.getContent());
         responseModifyFeedDTO.setFiles(feed.getFiles());
 
         return responseModifyFeedDTO;

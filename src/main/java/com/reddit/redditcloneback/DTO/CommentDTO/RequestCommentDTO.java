@@ -12,5 +12,5 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class RequestCommentDTO {
     private String content;
-    private String feedKey;
+    private String key;
 }

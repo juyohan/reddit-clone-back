@@ -6,6 +6,7 @@ import com.reddit.redditcloneback.DTO.FeedDTO.ResponseModifyFeedDTO;
 import com.reddit.redditcloneback.DTO.Result;
 import com.reddit.redditcloneback.Service.FeedService;
 import com.reddit.redditcloneback.Service.FeedFilesService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -29,25 +30,30 @@ public class FeedController {
         this.feedFilesService = feedFilesService;
     }
 
-    @PostMapping("/save")
+    @PostMapping(value = "/save", consumes = {"multipart/form-data"})
     public ResponseEntity<String> saveFeed(@RequestPart("feed-dto") RequestFeedDTO requestFeedDTO,
-                                           @RequestParam(value = "files") List<MultipartFile> multipartFileList
+                                           @RequestParam(value = "files", required = false) List<MultipartFile> multipartFileList
                                          ) {
+//    public ResponseEntity<String> saveFeed(@RequestBody RequestFeedDTO requestFeedDTO
+//    ){
+        System.out.println("requestFeedDTO = " + requestFeedDTO);
+//        Feed feed = feedService.createFeed(requestFeedDTO);
         Feed feed = feedService.createFeed(requestFeedDTO, multipartFileList);
 
-        return new ResponseEntity<>(feed.getFeedKey(), HttpStatus.OK);
+
+        return new ResponseEntity<>(feed.getKey(), HttpStatus.OK);
     }
 
     @GetMapping("/modify")
-    public ResponseEntity<ResponseModifyFeedDTO> modifiedFeed(@RequestParam("feedKey") String feedKey) {
-        ResponseModifyFeedDTO responseModifyFeedDTO = feedService.mappingModifyFeedDTO(feedKey);
+    public ResponseEntity<ResponseModifyFeedDTO> modifiedFeed(@RequestParam("feedKey") String key) {
+        ResponseModifyFeedDTO responseModifyFeedDTO = feedService.mappingModifyFeedDTO(key);
         return new ResponseEntity<>(responseModifyFeedDTO, HttpStatus.OK);
     }
 
     @PostMapping("/modify/save")
     public ResponseEntity<String> modifiedSaveFeed(@RequestPart("feed-dto") RequestFeedDTO requestFeedDTO,
-                                             @RequestParam(value = "files") List<MultipartFile> multipartFiles,
-                                             @RequestParam("feedKey") String feedKey) {
+                                                   @RequestParam(value = "files") List<MultipartFile> multipartFiles,
+                                                   @RequestParam("feedKey") String feedKey) {
         feedService.modifiedSaveFeed(feedKey, requestFeedDTO, multipartFiles);
 
 
@@ -60,7 +66,9 @@ public class FeedController {
 //    }
 
     @GetMapping("/new")
-    public ResponseEntity<Result> getNewPost(@PageableDefault(size = 8, direction = Sort.Direction.DESC, sort = "CreateDate") Pageable pageable) {
+    public ResponseEntity<Result> getNewPost(
+            @PageableDefault(size = 8, direction = Sort.Direction.DESC, sort = "CreateDate") Pageable pageable
+    ) {
         return new ResponseEntity<>(feedService.newFindFeeds(pageable), HttpStatus.OK);
     }
 
