@@ -25,6 +25,7 @@
   - *JWT (Json Web Token)*
   - *OAuth2*
   - *Mysql*
+  - *Flyway*
   - *Redis*
 
 </br>
