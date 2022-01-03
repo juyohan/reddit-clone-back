@@ -59,7 +59,6 @@ public class CommentCustomRepositoryImpl
                 .join(comment.feed, feed)
                 .where(eqUid(uid))
                 .orderBy(comment.createdDate.desc())
-                .orderBy(OrderByNull.DEFAULT)
                 .offset(pageRequest.getOffset())
                 .limit(Integer.toUnsignedLong(pageRequest.getPageSize()))
                 .fetchResults();

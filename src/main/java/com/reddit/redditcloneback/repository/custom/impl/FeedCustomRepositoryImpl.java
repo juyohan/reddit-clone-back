@@ -92,7 +92,6 @@ public class FeedCustomRepositoryImpl
                                 .stream()
                                 .toArray(OrderSpecifier[]::new)
                 )
-                .orderBy(OrderByNull.DEFAULT)
                 .offset(pageRequest.getOffset())
                 .limit(Integer.toUnsignedLong(pageRequest.getPageSize()))
                 .fetchResults();
@@ -129,7 +128,6 @@ public class FeedCustomRepositoryImpl
                                 .stream()
                                 .toArray(OrderSpecifier[]::new)
                 )
-                .orderBy(OrderByNull.DEFAULT)
                 .offset(pageRequest.getOffset())
                 .limit(Integer.toUnsignedLong(pageRequest.getPageSize()))
                 .fetchResults();

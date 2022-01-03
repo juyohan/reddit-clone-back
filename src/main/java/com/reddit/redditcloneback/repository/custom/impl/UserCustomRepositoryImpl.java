@@ -80,7 +80,6 @@ public class UserCustomRepositoryImpl
     public void updateVerificationSuccessUser(String nickname) {
         jpaQueryFactory.update(user)
                 .set(user.enable, true)
-//                .set(user.roles, )
                 .where(eqNickname(nickname))
                 .execute();
     }
