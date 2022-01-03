@@ -1,0 +1,52 @@
+spring:
+  profiles:
+    include:
+      - jwt
+      - oauth
+      - email
+      - redis
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: bookred
+    password: bookred
+    url: jdbc:mysql://localhost:3306/bookred?serverTimezone=Asia/Seoul&useUnicode=true&characterEncoding=utf8
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: none
+
+    flyway:
+      enabled: true
+
+    open-in-view: false
+
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 100MB
+      location: /Users/juyohan/BookRedFile/
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
+server:
+  port: 8081
+  error:
+    include-exception: true
+    include-message: always
+    include-stacktrace: on_param
+    whitelabel:
+      enabled: true
