@@ -44,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션을 사용하지 않게 설정함.
-//
+
                 .and()
                 .formLogin().disable()
                 .httpBasic().disable()

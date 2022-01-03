@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Table(name = "files")
 // 파일 자체를 DB에 저장하는게 아닌, 이름만 저장을 해준다.
 // 파일은 별도의 서버에 파일을 저장한다.
-public class FeedFile {
+public class File {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

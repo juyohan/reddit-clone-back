@@ -5,6 +5,7 @@ spring:
       - oauth
       - email
       - redis
+      - aws
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
